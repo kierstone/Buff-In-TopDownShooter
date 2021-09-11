@@ -1,0 +1,26 @@
+﻿<UXML xmlns="UnityEngine.UIElements">
+    <VisualElement class="flex-container main">
+        <Label name="createLabel" class="title" />
+        <VisualElement class="field">
+            <TextField name="orgName"/>
+            <Label name="orgNameNotification" class="notification"/>
+        </VisualElement>
+        <VisualElement name="datacenter" class="field">
+            <Label name="datacenterLabel" class="field-label"/>
+        </VisualElement>
+        <VisualElement name="dataCenterRetryContainer" class="row hidden">
+            <Label name="dataCenterRetryAlert" class="alert-label" />
+            <Button name="dataCenterRetryButton"/>
+        </VisualElement>
+        <VisualElement name="encryptField" class="field">
+            <Toggle name="encryptData" />
+            <Label name="encryptExplanation"/>
+            <Button name="encryptLearnMore" class="anchor"/>
+        </VisualElement>
+    </VisualElement>
+    <VisualElement class="footer row flex-container main">
+        <VisualElement name="gettingDatacenters" />
+        <Button name="back" />
+        <Button name="create" />
+    </VisualElement>
+</UXML>

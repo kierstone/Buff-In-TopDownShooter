@@ -60,11 +60,33 @@ public class DamageInfo{
     ///<summary>
     ///从策划脚本获得最终的伤害值
     ///</summary>
-    public int DamageValue(){
-        return DesignerScripts.CommonScripts.DamageValue(this);
+    public int DamageValue(bool asHeal){
+        return DesignerScripts.CommonScripts.DamageValue(this, asHeal);
     }
 
-    
+    ///<summary>
+    ///根据tag判断，这是否是一次治疗，那些tag算是治疗，当然是策划定义了才算数的
+    ///</summary>
+    public bool isHeal(){
+        for (int i = 0; i < this.tags.Length; i++){
+            if (tags[i] == DamageInfoTag.directHeal || tags[i] == DamageInfoTag.periodHeal){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ///<summary>
+    ///根据tag决定是否要播放受伤动作，当然你还可以是根据类型决定不同的受伤动作，但是我这个demo就没这么复杂了
+    ///</summary>
+    public bool requireDoHurt(){
+        for (int i = 0; i < this.tags.Length; i++){
+            if (tags[i] == DamageInfoTag.directDamage){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 ///<summary>

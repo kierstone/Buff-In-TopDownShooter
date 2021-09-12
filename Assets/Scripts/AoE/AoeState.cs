@@ -36,7 +36,7 @@ public class AoeState : MonoBehaviour{
     ///<summary>
     ///aoe已经存在过的时间，单位：秒
     ///</summary>
-    public float livedTime = 0;
+    public float timeElapsed = 0;
 
     ///<summary>
     ///aoe移动轨迹函数
@@ -124,7 +124,7 @@ public class AoeState : MonoBehaviour{
         this.model = aoe.model;
         this.radius = aoe.radius;
         this.duration = aoe.duration;
-        this.livedTime = 0;
+        this.timeElapsed = 0;
         this.tween = aoe.tween;
         this.tweenParam = aoe.tweenParam;
         this.tweenRunnedTime = 0;

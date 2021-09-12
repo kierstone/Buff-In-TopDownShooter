@@ -44,7 +44,7 @@ public class BulletState:MonoBehaviour{
     ///子弹已经存在了多久了，单位：秒
     ///毕竟duration是可以被重设的，比如经过一个aoe，生命周期减半了
     ///</summary>
-    public float worked = 0;
+    public float timeElapsed = 0;
 
     ///<summary>
     ///子弹的轨迹函数
@@ -86,6 +86,12 @@ public class BulletState:MonoBehaviour{
     ///</summary>
     public GameObject followingTarget = null;
 
+    ///<summary>
+    ///子弹传入的参数，逻辑用的到的临时记录
+    ///</summary>
+    public Dictionary<string, object> param = new Dictionary<string, object>();
+    
+
 
     ///<summary>
     ///还能命中几次
@@ -120,7 +126,7 @@ public class BulletState:MonoBehaviour{
 
         float moveDeg = (
             useFireDegreeForever == true ||
-            worked <= 0     //还是那个问题，unity的动画走的是update，所以慢了，旋转没转到预设角度，所以我得在第一帧走firedegree
+            timeElapsed <= 0     //还是那个问题，unity的动画走的是update，所以慢了，旋转没转到预设角度，所以我得在第一帧走firedegree
             ) ? fireDegree : transform.rotation.eulerAngles.y; //欧拉获得的是角度
 
         moveForce.y = 0;
@@ -151,13 +157,21 @@ public class BulletState:MonoBehaviour{
         this.fireDegree = bullet.fireDegree;
         this.speed = bullet.speed;
         this.duration = bullet.duration;
-        this.worked = 0;
+        this.timeElapsed = 0;
         this.tween = bullet.tween;
         this.useFireDegreeForever = bullet.useFireDegreeForever;
         this.canHitAfterCreated = bullet.canHitAfterCreated;
         this.smoothMove = !bullet.model.removeOnObstacle;
         this.moveType = bullet.model.moveType;
         this.hp = bullet.model.hitTimes;
+
+        this.param = new Dictionary<string, object>();
+        if (bullet.param != null){
+            foreach(KeyValuePair<string, object> kv in bullet.param){
+                this.param.Add(kv.Key, kv.Value);
+            }
+        }
+        
 
         synchronizedUnits();
 

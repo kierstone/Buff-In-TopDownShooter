@@ -27,6 +27,42 @@ namespace DesingerTables
                 new TimelineNode(1.12f, "SetCasterControlState", new object[]{true, true, true})
             }, 1.15f, TimelineGoTo.Null)},
 
+            //发射氪漏氪回力标
+            { "skill_cloakBoomerang", new TimelineModel("skill_cloakBoomerang", new TimelineNode[]{
+                new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
+                new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Head","Heart","",false}),
+                new TimelineNode(0.10f, "FireBullet", new object[]{
+                    new BulletLauncher(
+                        Bullet.data["cloakBoomerang"], null, Vector3.zero, 0, 5.0f, 10.0f, 0,
+                        DesignerScripts.Bullet.bulletTween["CloakBoomerangTween"],
+                        DesignerScripts.Bullet.targettingFunc["BulletCasterSelf"],
+                        true, new Dictionary<string, object>(){{"backTime", 1.0f}}
+                    ), "Muzzle"
+                }),
+                new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
+            }, 0.50f, TimelineGoTo.Null)},
+
+            //发射传送子弹
+            { "skill_teleportBullet_fire", new TimelineModel("skill_teleportBullet_fire", new TimelineNode[]{
+                new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
+                new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+                new TimelineNode(0.10f, "FireBullet", new object[]{
+                    new BulletLauncher(
+                        Bullet.data["teleportBullet"], null, Vector3.zero, 0, 6.0f, 10.0f, 0,
+                        DesignerScripts.Bullet.bulletTween["SlowlyFaster"]
+                    ), "Muzzle"
+                }),
+                new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
+            }, 0.50f, TimelineGoTo.Null)},
+            //闪现过去吃掉传送子弹(直接交给buff去办)
+            { "skill_teleportBullet_tele", new TimelineModel("skill_teleportBullet_tele", new TimelineNode[]{
+                new TimelineNode(0.00f, "AddBuffToCaster", new object[]{
+                    new AddBuffInfo(DesingerTables.Buff.data["TeleportTo"], null, null, 1, 0.3f, true, false)
+                })
+            }, 0.10f, TimelineGoTo.Null)},
+
             //发射跟踪子弹
             { "skill_followfire", new TimelineModel("skill_followfire", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),

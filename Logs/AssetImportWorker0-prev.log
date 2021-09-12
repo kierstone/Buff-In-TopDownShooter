@@ -1,0 +1,233 @@
+Using pre-set license
+Built from '2020.3/china_unity/release' branch; Version is '2020.3.15f2c1 (b25d0e34ed8a) revision 11689230'; Using compiler version '192528614'; Build Type 'Release'
+OS: 'Windows 10 Pro; OS build 19042.1165; Version 2009; 64bit' Language: 'zh' Physical Memory: 32693 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+
+ COMMAND LINE ARGUMENTS:
+E:\unity editor\2020.3.15f2c1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker0
+-projectPath
+E:/unity learn/Buff In ARPG
+-logFile
+Logs/AssetImportWorker0.log
+-srvPort
+51373
+Successfully changed project path to: E:/unity learn/Buff In ARPG
+E:/unity learn/Buff In ARPG
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 31.91 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2020.3.15f2c1 (b25d0e34ed8a)
+[Subsystems] Discovering subsystems at path E:/unity editor/2020.3.15f2c1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path E:/unity learn/Buff In ARPG/Assets
+GfxDevice: creating device client; threaded=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3070 (ID=0x2484)
+    Vendor:   
+    VRAM:     8043 MB
+    Driver:   30.0.14.7141
+Initialize mono
+Mono path[0] = 'E:/unity editor/2020.3.15f2c1/Editor/Data/Managed'
+Mono path[1] = 'E:/unity editor/2020.3.15f2c1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'E:/unity editor/2020.3.15f2c1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56764
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: E:/unity editor/2020.3.15f2c1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: E:/unity editor/2020.3.15f2c1/Editor/Data/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: E:/unity editor/2020.3.15f2c1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001410 seconds.
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 27.85 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  2.422 seconds
+Domain Reload Profiling:
+	ReloadAssembly (2422ms)
+		BeginReloadAssembly (58ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (0ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (1ms)
+		EndReloadAssembly (356ms)
+			LoadAssemblies (58ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (126ms)
+			ReleaseScriptCaches (0ms)
+			RebuildScriptCaches (33ms)
+			SetupLoadedEditorAssemblies (138ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (5ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (28ms)
+				BeforeProcessingInitializeOnLoad (9ms)
+				ProcessInitializeOnLoadAttributes (72ms)
+				ProcessInitializeOnLoadMethodAttributes (23ms)
+				AfterProcessingInitializeOnLoad (0ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (0ms)
+Platform modules already initialized, skipping
+Registering precompiled user dll's ...
+Registered in 0.002698 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.42 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.963 seconds
+Domain Reload Profiling:
+	ReloadAssembly (964ms)
+		BeginReloadAssembly (139ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (4ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (19ms)
+		EndReloadAssembly (775ms)
+			LoadAssemblies (84ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (225ms)
+			ReleaseScriptCaches (0ms)
+			RebuildScriptCaches (46ms)
+			SetupLoadedEditorAssemblies (355ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (6ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (0ms)
+				BeforeProcessingInitializeOnLoad (85ms)
+				ProcessInitializeOnLoadAttributes (258ms)
+				ProcessInitializeOnLoadMethodAttributes (3ms)
+				AfterProcessingInitializeOnLoad (2ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (5ms)
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.08 seconds
+Refreshing native plugins compatible for Editor in 0.47 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1444 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 162.3 MB.
+System memory in use after: 162.4 MB.
+
+Unloading 17 unused Assets to reduce memory usage. Loaded Objects now: 1909.
+Total: 2.605700 ms (FindLiveObjects: 0.245700 ms CreateObjectMapping: 0.038000 ms MarkObjects: 2.287800 ms  DeleteObjects: 0.032600 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  path: Assets/JKTART/prefab/boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/JKTART/prefab/boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c77902c932b63cf3cb178c859ef3def3') in 0.036952 seconds 
+  Import took 0.039484 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000273 seconds.
+  path: Assets/JKTART/prefab
+  artifactKey: Guid(a2f5b55f44c4ac94c8ecfc50f382aee1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/JKTART/prefab using Guid(a2f5b55f44c4ac94c8ecfc50f382aee1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '85b86d5a65b021c96f0880b4fcf7992b') in 0.002895 seconds 
+  Import took 0.004618 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 11.123306 seconds.
+  path: Assets/JKTART/textures/boomerang.tga
+  artifactKey: Guid(e7f4ce80d04a7ad47be4a0b33e74c330) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/JKTART/textures/boomerang.tga using Guid(e7f4ce80d04a7ad47be4a0b33e74c330) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd5a333a874c67422f9575de0401d4d0e') in 0.027158 seconds 
+  Import took 0.030043 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.032656 seconds.
+  path: Assets/JKTART/textures/boomerang.tga
+  artifactKey: Guid(e7f4ce80d04a7ad47be4a0b33e74c330) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/JKTART/textures/boomerang.tga using Guid(e7f4ce80d04a7ad47be4a0b33e74c330) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd5a333a874c67422f9575de0401d4d0e') in 0.008710 seconds 
+  Import took 0.011381 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 34.496965 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1ad80e1db4aabadb50bd37f24b0f42e4') in 0.004968 seconds 
+  Import took 0.007297 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 15.451748 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bc48f09b3dccae2a93cf8b80e5edc62f') in 0.004485 seconds 
+  Import took 0.007049 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.582389 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '225c0565eeb75ab09a015bdf38ea0b71') in 0.004402 seconds 
+  Import took 0.006802 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 3.264411 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3bbc1ed18358455c4fef6b00a615e627') in 0.004345 seconds 
+  Import took 0.006701 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 13.330014 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6bb1990f5e7818ff0259bd4a52bd23f3') in 0.004499 seconds 
+  Import took 0.006810 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 4.437522 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '08ade4cb2c22da4f5afcae0b09a0e26e') in 0.004661 seconds 
+  Import took 0.007258 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.821994 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd2fc0b6cbd54fd5ce4b81f7d79900b37') in 0.004618 seconds 
+  Import took 0.007171 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.404327 seconds.
+  path: Assets/Resources/Prefabs/Bullet/Boomerang.prefab
+  artifactKey: Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Bullet/Boomerang.prefab using Guid(e9397a618e38c7048b554bdd3e0f11cd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2243d5f48534fe98439212911290febd') in 0.004269 seconds 
+  Import took 0.006518 seconds .
+
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file

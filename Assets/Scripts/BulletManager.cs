@@ -20,6 +20,11 @@ public class BulletManager : MonoBehaviour{
             BulletState bs = bullet[i].GetComponent<BulletState>();
             if (!bs || bs.hp <= 0) continue;
 
+            //如果是刚创建的，那么就要处理刚创建的事情
+            if (bs.timeElapsed <= 0 && bs.model.onCreate != null){
+                bs.model.onCreate(bullet[i]);
+            }
+
             //处理子弹命中纪录信息
             int hIndex = 0;
             while (hIndex < bs.hitRecords.Count){
@@ -34,7 +39,7 @@ public class BulletManager : MonoBehaviour{
 
             //处理子弹的移动信息
             bs.SetMoveForce(
-                bs.tween == null ? Vector3.forward : bs.tween(bs.worked, bullet[i], bs.followingTarget)
+                bs.tween == null ? Vector3.forward : bs.tween(bs.timeElapsed, bullet[i], bs.followingTarget)
             );
 
             //处理子弹的碰撞信息，如果子弹可以碰撞，才会执行碰撞逻辑
@@ -56,7 +61,10 @@ public class BulletManager : MonoBehaviour{
                     ChaState cs = character[j].GetComponent<ChaState>();
                     if (!cs || cs.dead == true || cs.immuneTime > 0) continue;
 
-                    if (bSide == cs.side) continue;
+                    if (
+                        (bs.model.hitAlly == false && bSide == cs.side) ||
+                        (bs.model.hitFoe == false && bSide != cs.side)
+                    ) continue;
                     
                     float cRadius = cs.property.hitRadius;
                     Vector3 dis = bullet[i].transform.position - character[j].transform.position;
@@ -64,11 +72,6 @@ public class BulletManager : MonoBehaviour{
                     if (Mathf.Pow(dis.x, 2) + Mathf.Pow(dis.z, 2) <= Mathf.Pow(bRadius + cRadius, 2)){
                         //命中了
                         bs.hp -= 1;
-
-                        UnitAnim ua = character[j].GetComponent<UnitAnim>();
-                        if (ua){
-                            ua.Play("Hurt");
-                        }
 
                         if (bs.model.onHit != null){
                             bs.model.onHit(bullet[i],character[j]);
@@ -86,7 +89,7 @@ public class BulletManager : MonoBehaviour{
 
             ///生命周期的结算
             bs.duration -= timePassed;
-            bs.worked += timePassed;
+            bs.timeElapsed += timePassed;
             if (bs.duration <= 0 || bs.HitObstacle() == true){
                 if (bs.model.onRemoved != null){
                     bs.model.onRemoved(bullet[i]);

@@ -15,7 +15,7 @@ namespace DesignerScripts
             {"DoDamageOnRemoved", DoDamageOnRemoved}
         };
         public static Dictionary<string, AoeOnTick> onTickFunc = new Dictionary<string, AoeOnTick>(){
-            
+            {"BlackHole", BlackHole}
         };
         public static Dictionary<string, AoeOnCharacterEnter> onChaEnterFunc = new Dictionary<string, AoeOnCharacterEnter>(){
             {"DoDamageToEnterCha", DoDamageToEnterCha}
@@ -250,6 +250,27 @@ namespace DesignerScripts
                     SceneVariants.CreateDamage(aoeState.caster, aoeState.characterInRange[i], damage, 0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage});
                     if (hurtAction == true) cs.Play("Hurt");
                     if (effect != "") cs.PlaySightEffect(bp, effect);
+                }
+            }
+        }
+
+
+        ///<summary>
+        ///onChaEnter
+        ///鲁大师的黑洞效果
+        ///</summary>
+        private static void BlackHole(GameObject aoe){
+            AoeState ast = aoe.GetComponent<AoeState>();
+            if (!ast) return;
+            for (int i = 0; i < ast.characterInRange.Count; i++){
+                ChaState cs = ast.characterInRange[i].GetComponent<ChaState>();
+                if (cs && cs.dead == false){
+                    Vector3 disV = aoe.transform.position - ast.characterInRange[i].transform.position;
+                    float distance = Mathf.Sqrt(Mathf.Pow(disV.x, 2) + Mathf.Pow(disV.z, 2));
+                    float inTime = distance / (distance + 1.00f);   //1米是0.5秒，之后越来越大，但增幅是变小的
+                    cs.AddForceMove(new MovePreorder(
+                        disV * inTime, 1.00f
+                    ));
                 }
             }
         }

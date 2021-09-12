@@ -45,8 +45,8 @@ public class PlayerController : MonoBehaviour
         }
 
         string[] skillId = new string[]{
-            "homingMissle", "spaceMonkeyBall", "fire"
-        };
+            "spaceMonkeyBall", "teleportBullet", "cloakBoomerang"
+        }; //"fire", 
 
         bool btnHolding = false;
         for (int i = 0; i < sBtn.Length; i++){

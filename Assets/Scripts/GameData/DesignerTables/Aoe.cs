@@ -29,6 +29,16 @@ namespace DesingerTables
                 "", new object[0],  //chaLeave
                 "SpaceMonkeyBallHit", new object[]{0.01f},  //bulletEnter
                 "", new object[0]   //bulletLeave
+            )},
+            {"BlackHole", new AoeModel(
+                "BlackHole", "Effect/ShockWave", new string[0], 0.02f, true,
+                "", new object[0],  //create
+                "", new object[0],  //remove
+                "BlackHole", new object[0],  //tick
+                "", new object[0],  //chaEnter
+                "", new object[0],  //chaLeave
+                "", new object[0],  //bulletEnter
+                "", new object[0]   //bulletLeave
             )}
         };
     }

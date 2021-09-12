@@ -46,10 +46,16 @@ public struct SkillModel{
     ///</summary>
     public TimelineModel effect;
 
-    public SkillModel(string id, ChaResource cost, ChaResource condition, string effectTimeline){
+    ///<summary>
+    ///学会技能的时候，同时获得的buff，比如被动技能，就是学会的时候给buff就够了，没有timeline
+    ///</summary>
+    public AddBuffInfo[] buff;
+
+    public SkillModel(string id, ChaResource cost, ChaResource condition, string effectTimeline, AddBuffInfo[] buff){
         this.id = id;
         this.cost = cost;
         this.condition = condition;
         this.effect = DesingerTables.Timeline.data[effectTimeline]; //SceneVariants.desingerTables.timeline.data[effectTimeline];
+        this.buff = buff;
     }
 }

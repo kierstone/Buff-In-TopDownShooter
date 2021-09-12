@@ -37,20 +37,25 @@ public class AoeManager : MonoBehaviour {
                 //已经创建完成的
                 //先抓角色离开事件
                 List<GameObject> leaveCha = new List<GameObject>();
+                List<GameObject> toRemove = new List<GameObject>();
                 for (int m = 0; m < aoeState.characterInRange.Count; m++){
-                    if (
-                        aoeState.characterInRange[m] &&
-                        Utils.InRange(
-                            aoe[i].transform.position.x, aoe[i].transform.position.z, 
-                            aoeState.characterInRange[m].gameObject.transform.position.x, aoeState.characterInRange[m].gameObject.transform.position.z,
-                            aoeState.radius
-                        ) == false
-                    ){
-                        leaveCha.Add(aoeState.characterInRange[m]);
+                    if (aoeState.characterInRange[m] != null){
+                        if (Utils.InRange(
+                                aoe[i].transform.position.x, aoe[i].transform.position.z, 
+                                aoeState.characterInRange[m].gameObject.transform.position.x, aoeState.characterInRange[m].gameObject.transform.position.z,
+                                aoeState.radius
+                            ) == false
+                        ){
+                            leaveCha.Add(aoeState.characterInRange[m]);
+                            toRemove.Add(aoeState.characterInRange[m]);
+                        }
+                    }else{
+                        toRemove.Add(aoeState.characterInRange[m]);
                     }
+                        
                 }
-                for (int m = 0; m < leaveCha.Count; m++){
-                    aoeState.characterInRange.Remove(leaveCha[m]);
+                for (int m = 0; m < toRemove.Count; m++){
+                    aoeState.characterInRange.Remove(toRemove[m]);
                 }
                 if (aoeState.model.onChaLeave != null){
                     aoeState.model.onChaLeave(aoe[i], leaveCha);
@@ -82,24 +87,30 @@ public class AoeManager : MonoBehaviour {
 
                 //子弹离开
                 List<GameObject> leaveBullet = new List<GameObject>();
+                toRemove = new List<GameObject>();
                 for (int m = 0; m < aoeState.bulletInRange.Count; m++){
-                    if (
-                        aoeState.bulletInRange[m] &&
-                        Utils.InRange(
-                            aoe[i].transform.position.x, aoe[i].transform.position.z, 
-                            aoeState.bulletInRange[m].gameObject.transform.position.x, aoeState.bulletInRange[m].gameObject.transform.position.z,
-                            aoeState.radius
-                        ) == false
-                    ){
-                        leaveBullet.Add(aoeState.bulletInRange[m]);
+                    if (aoeState.bulletInRange[m]){
+                        if (Utils.InRange(
+                                aoe[i].transform.position.x, aoe[i].transform.position.z, 
+                                aoeState.bulletInRange[m].gameObject.transform.position.x, aoeState.bulletInRange[m].gameObject.transform.position.z,
+                                aoeState.radius
+                            ) == false
+                        ){
+                            leaveBullet.Add(aoeState.bulletInRange[m]);
+                            toRemove.Add(aoeState.bulletInRange[m]);
+                        }
+                    }else{
+                        toRemove.Add(aoeState.bulletInRange[m]);
                     }
+                        
                 }
-                for (int m = 0; m < leaveBullet.Count; m++){
-                    aoeState.bulletInRange.Remove(leaveBullet[m]);
+                for (int m = 0; m < toRemove.Count; m++){
+                    aoeState.bulletInRange.Remove(toRemove[m]);
                 }
                 if (aoeState.model.onBulletLeave != null){
                     aoeState.model.onBulletLeave(aoe[i], leaveBullet);
                 }
+                toRemove = null;
 
                 //子弹进入
                 List<GameObject> enterBullet = new List<GameObject>();
@@ -127,7 +138,7 @@ public class AoeManager : MonoBehaviour {
             }
             //然后是aoe的duration
             aoeState.duration -= timePassed;
-            aoeState.livedTime += timePassed;
+            aoeState.timeElapsed += timePassed;
             if (aoeState.duration <= 0 || aoeState.HitObstacle() == true){
                 if (aoeState.model.onRemoved != null){
                     aoeState.model.onRemoved(aoe[i]);

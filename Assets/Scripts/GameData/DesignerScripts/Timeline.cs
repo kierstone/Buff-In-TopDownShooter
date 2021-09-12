@@ -14,6 +14,7 @@ namespace DesignerScripts
             {"FireBullet", FireBullet},
             {"CasterImmune", CasterImmune},
             {"CreateAoE", CreateAoE},
+            {"AddBuffToCaster", AddBuffToCaster},
             {"CasterAddAmmo", CasterAddAmmo}
         };
 
@@ -237,6 +238,22 @@ namespace DesignerScripts
                 if (cs && args.Length > 0){
                     int modCount = (int)args[0];
                     cs.ModResource(new ChaResource(cs.resource.hp, modCount + cs.resource.ammo, cs.resource.stamina));
+                }
+            }
+        }
+
+        ///<summary>
+        ///给timeline的caster添加一个buff
+        ///[0]AddBuffInfo：如何添加一个buff，其中caster和carrier都会是timeline.caster本身
+        ///</summary>
+        private static void AddBuffToCaster(TimelineObj timelineObj, params object[] args){
+            if (timelineObj.caster && args.Length > 0){
+                AddBuffInfo abi = (AddBuffInfo)args[0];
+                abi.caster = timelineObj.caster;
+                abi.target = timelineObj.caster;
+                ChaState cs = timelineObj.caster.GetComponent<ChaState>();
+                if (cs){
+                    cs.AddBuff(abi);
                 }
             }
         }

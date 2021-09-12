@@ -23,6 +23,9 @@ public class UnitMove : MonoBehaviour
     )]
     public bool smoothMove = true;
 
+    [Tooltip("是否会忽略关卡外围，即飞行（只有飞行允许）到地图外的地方全部视作可过")]
+    public bool ignoreBorder = true;
+
     public bool hitObstacle{get{
         return _hitObstacle;
     }}
@@ -40,7 +43,9 @@ public class UnitMove : MonoBehaviour
             velocity.z * Time.fixedDeltaTime + transform.position.z
         );
 
-        MapTargetPosInfo mapTargetPosInfo = SceneVariants.map.FixTargetPosition(transform.position, bodyRadius, targetPos, moveType);
+        MapTargetPosInfo mapTargetPosInfo = SceneVariants.map.FixTargetPosition(
+            transform.position, bodyRadius, targetPos, moveType, (this.ignoreBorder == true && moveType == MoveType.fly)
+        );
         if (smoothMove == false && mapTargetPosInfo.obstacle == true){
             _hitObstacle = true;
             canMove = false;

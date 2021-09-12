@@ -73,10 +73,16 @@ public class BulletLauncher{
     ///</summary>
     public float canHitAfterCreated = 0;
 
+    ///<summary>
+    ///子弹的一些特殊逻辑使用的参数，可以在创建子的时候传递给子弹
+    ///</summary>
+    public Dictionary<string, object> param;
+
     public BulletLauncher(
         BulletModel model, GameObject caster, Vector3 firePos, float degree, float speed, float duration,
         float canHitAfterCreated = 0,
-        BulletTween tween = null, BulletTargettingFunction targetFunc = null, bool useFireDegree = false
+        BulletTween tween = null, BulletTargettingFunction targetFunc = null, bool useFireDegree = false,
+        Dictionary<string, object> param = null
     ){
         this.model = model;
         this.caster = caster;
@@ -87,6 +93,7 @@ public class BulletLauncher{
         this.tween = tween;
         this.useFireDegreeForever = useFireDegree;
         this.targetFunc = targetFunc;
+        this.param = param;
     }
 }
 
@@ -121,6 +128,14 @@ public struct BulletModel{
     public float sameTargetDelay;
 
     ///<summary>
+    ///子弹被创建的事件
+    ///<param name="bullet">要创建的子弹</param>
+    ///</summary>
+    public BulletOnCreate onCreate;
+
+    public object[] onCreateParam;
+
+    ///<summary>
     ///子弹命中目标时候发生的事情
     ///<param name="bullet">发生碰撞的子弹，应该是个bulletObj，但是在unity的逻辑下，他就是个GameObject，具体数据从GameObject拿了</param>
     ///<param name="target">被击中的角色</param>
@@ -153,26 +168,44 @@ public struct BulletModel{
     ///</summary>
     public bool removeOnObstacle;
 
+    ///<summary>
+    ///子弹是否会命中敌人
+    ///</summary>
+    public bool hitFoe;
+
+    ///<summary>
+    ///子弹是否会命中盟军
+    ///</summary>
+    public bool hitAlly;
+
     public BulletModel(
         string id, string prefab, 
+        string onCreate = "",
+        object[] createParams = null,
         string onHit = "",
         object[] onHitParams = null,
         string onRemoved = "",
         object[] onRemovedParams = null,
         MoveType moveType = MoveType.fly, bool removeOnObstacle = true,
-        float radius = 0.1f, int hitTimes = 1, float sameTargetDelay = 0.1f){
-            this.id = id;
-            this.prefab = prefab;
-            this.onHit = DesignerScripts.Bullet.onHitFunc[onHit];
-            this.onRemoved = DesignerScripts.Bullet.onRemovedFunc[onRemoved];
-            this.onHitParams = onHitParams != null ? onHitParams : new object[0];
-            this.onRemovedParams = onRemovedParams != null ? onRemovedParams : new object[0];
-            this.radius = radius;
-            this.hitTimes = hitTimes;
-            this.sameTargetDelay = sameTargetDelay;
-            this.moveType = moveType;
-            this.removeOnObstacle = removeOnObstacle;
-        }
+        float radius = 0.1f, int hitTimes = 1, float sameTargetDelay = 0.1f,
+        bool hitFoe = true, bool hitAlly = false
+    ){
+        this.id = id;
+        this.prefab = prefab;
+        this.onHit = onHit == "" ? null : DesignerScripts.Bullet.onHitFunc[onHit];
+        this.onRemoved = onRemoved == "" ? null : DesignerScripts.Bullet.onRemovedFunc[onRemoved];
+        this.onCreate = onCreate == "" ? null : DesignerScripts.Bullet.onCreateFunc[onCreate];
+        this.onCreateParam = createParams != null ? createParams : new object[0];
+        this.onHitParams = onHitParams != null ? onHitParams : new object[0];
+        this.onRemovedParams = onRemovedParams != null ? onRemovedParams : new object[0];
+        this.radius = radius;
+        this.hitTimes = hitTimes;
+        this.sameTargetDelay = sameTargetDelay;
+        this.moveType = moveType;
+        this.removeOnObstacle = removeOnObstacle;
+        this.hitAlly = hitAlly;
+        this.hitFoe = hitFoe;
+    }
 }
 
 ///<summary>
@@ -194,6 +227,12 @@ public class BulletHitRecord{
         this.timeToCanHit = timeToCanHit;
     }
 }
+
+
+///<summary>
+///子弹被创建的事件
+///</summary>
+public delegate void BulletOnCreate(GameObject bullet);
 
 ///<summary>
 ///子弹命中目标的时候触发的事件

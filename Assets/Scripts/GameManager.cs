@@ -43,9 +43,8 @@ public class GameManager : MonoBehaviour
         mcs.LearnSkill(DesingerTables.Skill.data["roll"]);
         mcs.LearnSkill(DesingerTables.Skill.data["spaceMonkeyBall"]);  
         mcs.LearnSkill(DesingerTables.Skill.data["homingMissle"]);   
-        mcs.AddBuff(new AddBuffInfo(
-            DesingerTables.Buff.data["AutoCheckReload"], mainCharacter, mainCharacter, 1, 1, true, true, null
-        ));
+        mcs.LearnSkill(DesingerTables.Skill.data["cloakBoomerang"]);
+        mcs.LearnSkill(DesingerTables.Skill.data["teleportBullet"]);
 
         //【test】给主角添加火焰护盾的aoe
         this.CreateAoE(new AoeLauncher(
@@ -53,6 +52,12 @@ public class GameManager : MonoBehaviour
             0.3f, 600.00f, 0,
             DesignerScripts.AoE.aoeTweenFunc["AroundCaster"],//DesignerScripts.AoE.aoeTweenFunc["AroundCaster"], 
             new object[]{1.2f, 360.0f}
+        ));
+        //【test】屏幕中心的黑洞
+        this.CreateAoE(new AoeLauncher(
+            DesingerTables.AoE.data["BlackHole"], null, 
+            new Vector3(SceneVariants.map.MapWidth() * SceneVariants.map.gridSize.x / 2, 0, SceneVariants.map.MapHeight() * SceneVariants.map.gridSize.y / 2),
+            10.0f, 9999, 0
         ));
 
         //创建默认敌人

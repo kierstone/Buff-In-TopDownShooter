@@ -60,9 +60,15 @@ public class DamageManager : MonoBehaviour{
             }
         }
         //最后根据结果处理：如果是治疗或者角色非无敌，才会对血量进行调整。
-        if (dInfo.DamageValue() < 0 || defenderChaState.immuneTime <= 0){
+        bool isHeal = dInfo.isHeal();
+        int dVal = dInfo.DamageValue(isHeal);
+        if (isHeal == true || defenderChaState.immuneTime <= 0){
+            if (dInfo.requireDoHurt() == true && defenderChaState.CanBeKilledByDamageInfo(dInfo) == false){
+                UnitAnim ua = defenderChaState.GetComponent<UnitAnim>();
+                if (ua) ua.Play("Hurt");
+            }
             defenderChaState.ModResource(new ChaResource(
-                -dInfo.DamageValue()
+                -dVal
             ));
         }
         

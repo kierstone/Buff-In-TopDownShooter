@@ -115,10 +115,11 @@ public class MapInfo{
     ///<param name="gridX">单元格坐标x</param>
     ///<param name="gridY">单元格坐标y</param>
     ///<param name="moveType">移动方式</param>
+    ///<param name="ignoreBorder">是否把地图外的区域都当做可过</param>
     ///<return>是否可过</return>
     ///</summary>
-    public bool CanGridPasses(int gridX, int gridY, MoveType moveType){
-        if (gridX < 0 || gridX >= MapWidth() || gridY < 0 || gridY >= MapHeight()) return false;
+    public bool CanGridPasses(int gridX, int gridY, MoveType moveType, bool ignoreBorder){
+        if (gridX < 0 || gridX >= MapWidth() || gridY < 0 || gridY >= MapHeight()) return ignoreBorder;
         switch (moveType){
             case MoveType.ground: return grid[gridX, gridY].groundCanPass;
             case MoveType.fly: return grid[gridX, gridY].flyCanPass;
@@ -196,16 +197,18 @@ public class MapInfo{
     ///<param name="dir">查询方向以及长度，单位：米</param>
     ///<param name="radius">假设有一个半径（当做点是圆形中心），也就是额外追加一个距离，单位：米</param>
     ///<param name="moveType">移动方式</param>
+    ///<param name="ignoreBorder">是否把地图外的区域都当做可过</param>
     ///<return>最合适的x坐标</return>
     ///</summary>
-    public float GetNearestVerticalBlock(Vector3 pivot, float dir, float radius, MoveType moveType){
+    public float GetNearestVerticalBlock(Vector3 pivot, float dir, float radius, MoveType moveType, bool ignoreBorder){
         if (dir == 0) return pivot.x;
         int dv = dir > 0 ? 1 : -1;
         float bestX = pivot.x + dir;
+        int seekWidth = Mathf.CeilToInt((Mathf.Abs(dir) + radius) / gridSize.x + 2);
         Vector2Int gPos = GetGridPosByMeter(pivot.x, pivot.z);
-        for (var i = 0; i < MapWidth(); i++){
+        for (var i = 0; i < seekWidth; i++){
             int cgX = gPos.x + dv * i;
-            if (this.CanGridPasses(cgX, gPos.y, moveType) == false){
+            if (this.CanGridPasses(cgX, gPos.y, moveType, ignoreBorder) == false){
                 float wallX = (cgX - dv * 0.5f) * gridSize.x - dv * radius;
                 if (dv > 0){
                     return Mathf.Min(wallX, bestX);
@@ -223,16 +226,18 @@ public class MapInfo{
     ///<param name="dir">查询方向以及高度，单位：米</param>
     ///<param name="radius">假设有一个半径（当做点是圆形中心），也就是额外追加一个距离，单位：米</param>
     ///<param name="moveType">移动方式</param>
+    ///<param name="ignoreBorder">是否把地图外的区域都当做可过</param>
     ///<return>最合适的z坐标</return>
     ///</summary>
-    public float GetNearestHorizontalBlock(Vector3 pivot, float dir, float radius, MoveType moveType){
+    public float GetNearestHorizontalBlock(Vector3 pivot, float dir, float radius, MoveType moveType, bool ignoreBorder){
         if (dir == 0) return pivot.z;
         int dv = dir > 0 ? 1 : -1;
         float bestZ = pivot.z + dir;
+        int seekHeight = Mathf.CeilToInt((Mathf.Abs(dir) + radius) / gridSize.y + 2);
         Vector2Int gPos = GetGridPosByMeter(pivot.x, pivot.z);
-        for (var i = 0; i < MapHeight(); i++){
+        for (var i = 0; i < seekHeight; i++){
             int cgY = gPos.y + dv * i;
-            if (this.CanGridPasses(gPos.x, cgY, moveType) == false){
+            if (this.CanGridPasses(gPos.x, cgY, moveType, ignoreBorder) == false){
                 float wallZ = (cgY - dv * 0.5f) * gridSize.y - dv * radius;
                 if (dv > 0){
                     return Mathf.Min(wallZ, bestZ);
@@ -251,13 +256,14 @@ public class MapInfo{
     ///<param name="radius">这个圆形的半径</param>
     ///<param name="targetPos">这个圆形期望移动到的坐标</param>
     ///<param name="moveType">圆形的移动方式</param>
+    ///<param name="ignoreBorder">是否把地图外的区域都当做可过</param>
     ///<return>应该移动到的坐标</return>
     ///</summary>
-    public MapTargetPosInfo FixTargetPosition(Vector3 pivot, float radius, Vector3 targetPos, MoveType moveType){
+    public MapTargetPosInfo FixTargetPosition(Vector3 pivot, float radius, Vector3 targetPos, MoveType moveType, bool ignoreBorder){
         float xDir = targetPos.x - pivot.x;
         float zDir = targetPos.z - pivot.z;
-        float bestX = GetNearestVerticalBlock(pivot, xDir, radius, moveType);
-        float bestZ = GetNearestHorizontalBlock(pivot, zDir, radius, moveType);
+        float bestX = GetNearestVerticalBlock(pivot, xDir, radius, moveType, ignoreBorder);
+        float bestZ = GetNearestHorizontalBlock(pivot, zDir, radius, moveType, ignoreBorder);
 
         bool obstacled =  (bestX != targetPos.x || bestZ != targetPos.z);
         return new MapTargetPosInfo(obstacled, new Vector3(bestX, targetPos.y, bestZ));

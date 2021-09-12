@@ -198,10 +198,10 @@ public class ChaState:MonoBehaviour{
                 }
             }
             if (toRemove.Count > 0){
-                AttrRecheck();
                 for (int i = 0; i < toRemove.Count; i++){
                     this.buffs.Remove(toRemove[i]);
                 }
+                AttrRecheck();
             }
             
             toRemove = null;
@@ -397,8 +397,8 @@ public class ChaState:MonoBehaviour{
     ///<return>如果是true代表角色可能会被这次伤害所杀</return>
     ///</summary>
     public bool CanBeKilledByDamageInfo(DamageInfo damageInfo){
-        if (this.immuneTime > 0) return false;
-        int dValue = damageInfo.DamageValue();
+          if (this.immuneTime > 0 || damageInfo.isHeal() == true) return false;
+        int dValue = damageInfo.DamageValue(false);
         return dValue >= this.resource.hp;
     }
 
@@ -415,7 +415,10 @@ public class ChaState:MonoBehaviour{
         if (hasOnes.Count > 0){
             //已经存在
             hasOnes[0].buffParam = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, object> kv in buff.buffParam){hasOnes[0].buffParam.Add(kv.Key, kv.Value);};
+            if (buff.buffParam != null){
+                foreach (KeyValuePair<string, object> kv in buff.buffParam){hasOnes[0].buffParam[kv.Key] = kv.Value;};
+            }
+            
             hasOnes[0].duration = (buff.durationSetTo == true) ? buff.duration : (buff.duration + hasOnes[0].duration);
             int afterAdd = hasOnes[0].stack + modStack;
             modStack = afterAdd >= hasOnes[0].model.maxStack ? 
@@ -483,7 +486,6 @@ public class ChaState:MonoBehaviour{
     ///<return>是否释放成功</return>
     ///</summary>
     public bool CastSkill(string id){
-        Debug.Log("Wanna Cast Skill => " + controlState.canUseSkill + "(" + this._controlState.canUseSkill + "," + this.timelineControlState.canUseSkill + ")");
         if (this.controlState.canUseSkill == false) return false; //不能用技能就不放了
         SkillObj skillObj = GetSkillById(id);
         if (skillObj == null) return false;
@@ -521,6 +523,15 @@ public class ChaState:MonoBehaviour{
     ///</summary>
     public void LearnSkill(SkillModel skillModel, int level = 1){
         this.skills.Add(new SkillObj(skillModel, level));
+        if (skillModel.buff != null){
+            for (int i = 0; i < skillModel.buff.Length; i++){
+                AddBuffInfo abi = skillModel.buff[i];
+                abi.permanent = true;
+                abi.duration = 10;
+                abi.durationSetTo = true;
+                this.AddBuff(abi);
+            }
+        }
     }
 
     ///<summary>

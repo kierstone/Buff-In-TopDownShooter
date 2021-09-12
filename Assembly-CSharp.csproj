@@ -76,14 +76,16 @@
      <Compile Include="Assets\Scripts\Unit\UnitRemover.cs" />
      <Compile Include="Assets\Scripts\CamFollow.cs" />
      <Compile Include="Assets\Scripts\AoE\AoeState.cs" />
+     <Compile Include="Assets\Scripts\GameData\DesignerScripts\Buff.cs" />
+     <Compile Include="Assets\Scripts\GameData\DesignerTables\Buff.cs" />
      <Compile Include="Assets\Scripts\GameData\DesignerTables\Timeline.cs" />
      <Compile Include="Assets\Scripts\Structs\GameTimeline.cs" />
      <Compile Include="Assets\Scripts\Unit\ViewContainer.cs" />
      <Compile Include="Assets\Scripts\GameData\DesignerScripts\Aoe.cs" />
      <Compile Include="Assets\Scripts\Structs\MapGrids.cs" />
      <Compile Include="Assets\Scripts\GameData\DesignerTables\Bullet.cs" />
-     <Compile Include="Assets\Scripts\GameData\DesignerScripts\Buff.cs" />
-     <Compile Include="Assets\Scripts\GameData\DesignerTables\Buff.cs" />
+     <Compile Include="Assets\Scripts\SightEffect\RotateY.cs" />
+     <Compile Include="Assets\Scripts\SightEffect\BallRolling.cs" />
     <Reference Include="UnityEngine">
         <HintPath>E:/unity editor/2020.3.15f2c1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

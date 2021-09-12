@@ -29,12 +29,17 @@ public struct ChaControlState{
     }
 
     public void Origin(){
-        this.canRotate = true;
+        this.canMove = true;
         this.canRotate = true;
         this.canUseSkill = true;
     }
 
     public static ChaControlState origin = new ChaControlState(true, true, true);
+
+    ///<summary>
+    ///昏迷效果
+    ///</summary>
+    public static ChaControlState stun = new ChaControlState(false, false, false);
 
     public static ChaControlState operator +(ChaControlState cs1, ChaControlState cs2){
         return new ChaControlState(

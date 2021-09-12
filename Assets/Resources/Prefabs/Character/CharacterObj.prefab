@@ -65,6 +65,7 @@ MonoBehaviour:
   moveType: 0
   bodyRadius: 0.25
   smoothMove: 1
+  ignoreBorder: 0
 --- !u!114 &1484235816829188394
 MonoBehaviour:
   m_ObjectHideFlags: 0

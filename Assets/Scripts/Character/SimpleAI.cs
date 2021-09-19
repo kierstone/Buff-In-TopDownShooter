@@ -15,7 +15,7 @@ public class SimpleAI:MonoBehaviour{
     private TimelineModel fire = new TimelineModel("", new TimelineNode[]{
         new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
         new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-        new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+        new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","Effect/MuzzleFlash","",false}),
         new TimelineNode(0.10f, "FireBullet", new object[]{
             new BulletLauncher(
                 DesingerTables.Bullet.data["normal1"], null, Vector3.zero, 0, 6.0f, 10.0f, 0, 

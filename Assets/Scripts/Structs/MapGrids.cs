@@ -60,8 +60,8 @@ public class MapInfo{
         this.border = new Rect(
             -gridSize.x / 2.00f,
             -gridSize.y / 2.00f,
-            gridSize.x,
-            gridSize.y
+            gridSize.x * MapWidth(),
+            gridSize.y * MapHeight()
         );
     }
 
@@ -135,17 +135,14 @@ public class MapInfo{
     ///<return>是否可以站在这里，true代表可以</return>
     ///</summary>
     public bool CanUnitPlacedHere(Vector3 pos, float radius, MoveType moveType){
-        Vector2Int lt = GetGridPosByMeter(Mathf.Max(0, pos.x - radius), Mathf.Max(0, pos.z - radius));
-        Vector2Int rb = GetGridPosByMeter(Mathf.Min(pos.x + radius, MapWidth() - 1), Mathf.Min(pos.z + radius, MapHeight() - 1));
+        Vector2Int lt = GetGridPosByMeter(pos.x - radius, pos.z - radius);
+        Vector2Int rb = GetGridPosByMeter(pos.x + radius, pos.z + radius);
         int aw = rb.x - lt.x + 1;
         int ah = rb.y - lt.y + 1;
         List<Rect> collisionRects = new List<Rect>();
         for (int i = lt.x; i <= rb.x; i++){
             for (int j = lt.y; j <= rb.y; j++){
-                if (
-                    (moveType == MoveType.ground && grid[i, j].groundCanPass == false) ||
-                    (moveType == MoveType.fly && grid[i, j].flyCanPass == false)
-                ){
+                if (CanGridPasses(i, j, moveType, false) == false){
                     collisionRects.Add(new Rect(
                         (i - 0.5f) * gridSize.x,
                         (j - 0.5f) * gridSize.y,
@@ -192,7 +189,7 @@ public class MapInfo{
 
     
     ///<summary>
-    ///从一个点（单位米）出发获得方向上的第一个水平阻挡
+    ///从一个点（单位米）出发获得方向上的第一个竖着的阻挡
     ///<param name="pivot">出发的点，单位：米</param>
     ///<param name="dir">查询方向以及长度，单位：米</param>
     ///<param name="radius">假设有一个半径（当做点是圆形中心），也就是额外追加一个距离，单位：米</param>
@@ -221,7 +218,7 @@ public class MapInfo{
     }
 
     ///<summary>
-    ///从一个点（单位米）出发获得方向上的第一个垂直阻挡
+    ///从一个点（单位米）出发获得方向上的第一个横着的阻挡
     ///<param name="pivot">出发的点，单位：米</param>
     ///<param name="dir">查询方向以及高度，单位：米</param>
     ///<param name="radius">假设有一个半径（当做点是圆形中心），也就是额外追加一个距离，单位：米</param>
@@ -251,7 +248,7 @@ public class MapInfo{
 
     ///<summary>
     ///根据一个圆（中心点和半径），获得期望移动到某个坐标的最理想的点
-    ///TODO 浮点数问题，导致边界碰撞有异常，接近0（无论是x还是z）都会出现异常
+    ///TODO 只有移动速度不那么快的时候才在大多数时候工作正常……
     ///<param name="pivot">这个圆形的中心点坐标</param>
     ///<param name="radius">这个圆形的半径</param>
     ///<param name="targetPos">这个圆形期望移动到的坐标</param>
@@ -265,7 +262,10 @@ public class MapInfo{
         float bestX = GetNearestVerticalBlock(pivot, xDir, radius, moveType, ignoreBorder);
         float bestZ = GetNearestHorizontalBlock(pivot, zDir, radius, moveType, ignoreBorder);
 
-        bool obstacled =  (bestX != targetPos.x || bestZ != targetPos.z);
+        bool obstacled =  (
+            Mathf.RoundToInt(bestX * 1000) != Mathf.RoundToInt(targetPos.x * 1000) || 
+            Mathf.RoundToInt(bestZ * 1000) != Mathf.RoundToInt(targetPos.z * 1000)
+        );
         return new MapTargetPosInfo(obstacled, new Vector3(bestX, targetPos.y, bestZ));
     }
 }

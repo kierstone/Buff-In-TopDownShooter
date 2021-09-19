@@ -25,9 +25,9 @@ namespace DesingerTables
                 "", new object[0],  //create
                 "", new object[0],  //remove
                 "", new object[0],  //tick
-                "DoDamageToEnterCha", new object[]{new Damage(0, 20), 0.2f, true, false, true, "HitEffect_A", "Body"},  //chaEnter
+                "DoDamageToEnterCha", new object[]{new Damage(0, 20), 0.2f, true, false, true, "Effect/HitEffect_A", "Body"},  //chaEnter
                 "", new object[0],  //chaLeave
-                "SpaceMonkeyBallHit", new object[]{0.01f},  //bulletEnter
+                "SpaceMonkeyBallHit", new object[]{0.05f},  //bulletEnter
                 "", new object[0]   //bulletLeave
             )},
             {"BlackHole", new AoeModel(
@@ -35,6 +35,26 @@ namespace DesingerTables
                 "", new object[0],  //create
                 "", new object[0],  //remove
                 "BlackHole", new object[0],  //tick
+                "", new object[0],  //chaEnter
+                "", new object[0],  //chaLeave
+                "", new object[0],  //bulletEnter
+                "", new object[0]   //bulletLeave
+            )},
+            {"BoomExplosive", new AoeModel( //炸弹爆炸
+                "BoomExplosive", "", new string[0], 0, false,
+                "CreateSightEffect", new object[]{"Effect/Explosion_A"},
+                "DoDamageOnRemoved", new object[]{new Damage(0, 20), 0.1f, true, false, true, "Effect/HitEffect_A", "Body"},    //10%攻击力加成
+                "", new object[0],  //tick
+                "", new object[0],  //chaEnter
+                "", new object[0],  //chaLeave
+                "", new object[0],  //bulletEnter
+                "", new object[0]   //bulletLeave
+            )},
+            {"StayingBoom", new AoeModel(   //炸弹掉在地上的样子
+                "StayingBoom", "Bullet/BombBall", new string[0], 0, false,
+                "", new object[0],
+                "CreateAoeOnRemoved", new object[]{"BoomExplosive", 1.5f, 0f},
+                "", new object[0],  //tick
                 "", new object[0],  //chaEnter
                 "", new object[0],  //chaLeave
                 "", new object[0],  //bulletEnter

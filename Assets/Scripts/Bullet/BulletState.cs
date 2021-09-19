@@ -172,18 +172,26 @@ public class BulletState:MonoBehaviour{
             }
         }
         
-
         synchronizedUnits();
 
         //把视觉特效补充给bulletObj
-        GameObject bulletEffect = Instantiate<GameObject>(
-            Resources.Load<GameObject>("Prefabs/Bullet/" + bullet.model.prefab),
-            new Vector3(),
-            Quaternion.identity,
-            this.transform
+        if (bullet.model.prefab != ""){
+            GameObject bulletEffect = Instantiate<GameObject>(
+                Resources.Load<GameObject>("Prefabs/Bullet/" + bullet.model.prefab),
+                new Vector3(),
+                Quaternion.identity,
+                viewContainer.transform
+            );
+            bulletEffect.transform.localPosition = new Vector3(0, this.gameObject.transform.position.y, 0);
+            bulletEffect.transform.localRotation = Quaternion.identity;
+        }
+
+        this.gameObject.transform.position = new Vector3(
+            this.gameObject.transform.position.x,
+            0,
+            this.gameObject.transform.position.z
         );
-        bulletEffect.transform.localPosition = new Vector3();
-        bulletEffect.transform.localRotation = Quaternion.identity;
+
         
         this.followingTarget = bullet.targetFunc == null ? null :
             bullet.targetFunc(this.gameObject, targets);
@@ -198,6 +206,11 @@ public class BulletState:MonoBehaviour{
         unitMove.smoothMove = this.smoothMove;
         unitMove.moveType = this.moveType;
         unitMove.bodyRadius = this.model.radius;
+    }
+
+    public void SetMoveType(MoveType toType){
+        this.moveType = toType;
+        synchronizedUnits();
     }
 
     ///<summary>

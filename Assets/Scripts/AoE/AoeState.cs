@@ -148,9 +148,15 @@ public class AoeState : MonoBehaviour{
                 Quaternion.identity,
                 viewContainer.transform
             );
-            aoeEffect.transform.localPosition = new Vector3();
+            
+            aoeEffect.transform.localPosition = new Vector3(0, this.gameObject.transform.position.y, 0);
             aoeEffect.transform.localRotation = Quaternion.identity;
         }
+        this.gameObject.transform.position = new Vector3(
+            this.gameObject.transform.position.x,
+            0,
+            this.gameObject.transform.position.z
+        );
     }
 
     ///<summary>

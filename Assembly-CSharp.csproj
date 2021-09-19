@@ -37,8 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Structs\Character\ChaProperty.cs" />
+     <Compile Include="Assets\Scripts\SightEffect\RotateY.cs" />
      <Compile Include="Assets\Scripts\AoeManager.cs" />
      <Compile Include="Assets\Scripts\UI\PieChartController.cs" />
+     <Compile Include="Assets\Scripts\SightEffect\BallRolling.cs" />
      <Compile Include="Assets\Scripts\BulletManager.cs" />
      <Compile Include="Assets\Scripts\Structs\Character\MoveInfo.cs" />
      <Compile Include="Assets\Scripts\Structs\Character\Buff.cs" />
@@ -84,8 +86,12 @@
      <Compile Include="Assets\Scripts\GameData\DesignerScripts\Aoe.cs" />
      <Compile Include="Assets\Scripts\Structs\MapGrids.cs" />
      <Compile Include="Assets\Scripts\GameData\DesignerTables\Bullet.cs" />
-     <Compile Include="Assets\Scripts\SightEffect\RotateY.cs" />
-     <Compile Include="Assets\Scripts\SightEffect\BallRolling.cs" />
+     <Compile Include="Assets\Scripts\UI\PlayerStateListener.cs" />
+     <Compile Include="Assets\Scripts\UI\UnitPopText.cs" />
+     <Compile Include="Assets\Scripts\UI\PopTextManager.cs" />
+     <Compile Include="Assets\Scripts\Structs\Line.cs" />
+     <Compile Include="Assets\Scripts\MobSpawnManager.cs" />
+     <Compile Include="Assets\Scripts\SightEffect\BouncingBallY.cs" />
     <Reference Include="UnityEngine">
         <HintPath>E:/unity editor/2020.3.15f2c1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

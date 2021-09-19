@@ -10,7 +10,7 @@ namespace DesingerTables
             { "skill_fire", new TimelineModel("skill_fire", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","Effect/MuzzleFlash","",false}),
                 new TimelineNode(0.10f, "FireBullet", new object[]{
                     new BulletLauncher(
                         Bullet.data["normal0"], null, Vector3.zero, 0, 6.0f, 10.0f
@@ -31,7 +31,7 @@ namespace DesingerTables
             { "skill_cloakBoomerang", new TimelineModel("skill_cloakBoomerang", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Head","Heart","",false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Head","Effect/Heart","",false}),
                 new TimelineNode(0.10f, "FireBullet", new object[]{
                     new BulletLauncher(
                         Bullet.data["cloakBoomerang"], null, Vector3.zero, 0, 5.0f, 10.0f, 0,
@@ -47,10 +47,10 @@ namespace DesingerTables
             { "skill_teleportBullet_fire", new TimelineModel("skill_teleportBullet_fire", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","Effect/MuzzleFlash","",false}),
                 new TimelineNode(0.10f, "FireBullet", new object[]{
                     new BulletLauncher(
-                        Bullet.data["teleportBullet"], null, Vector3.zero, 0, 6.0f, 10.0f, 0,
+                        Bullet.data["teleportBullet"], null, Vector3.zero, 0, 6.0f, 3.0f, 0,
                         DesignerScripts.Bullet.bulletTween["SlowlyFaster"]
                     ), "Muzzle"
                 }),
@@ -59,7 +59,7 @@ namespace DesingerTables
             //闪现过去吃掉传送子弹(直接交给buff去办)
             { "skill_teleportBullet_tele", new TimelineModel("skill_teleportBullet_tele", new TimelineNode[]{
                 new TimelineNode(0.00f, "AddBuffToCaster", new object[]{
-                    new AddBuffInfo(DesingerTables.Buff.data["TeleportTo"], null, null, 1, 0.3f, true, false)
+                    new AddBuffInfo(DesingerTables.Buff.data["TeleportTo"], null, null, 1, 0.0f, true, false)
                 })
             }, 0.10f, TimelineGoTo.Null)},
 
@@ -67,7 +67,7 @@ namespace DesingerTables
             { "skill_followfire", new TimelineModel("skill_followfire", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","Effect/MuzzleFlash","",false}),
                 new TimelineNode(0.10f, "FireBullet", new object[]{
                     new BulletLauncher(
                         Bullet.data["normal0"], null, Vector3.zero, 0, 3.0f, 100.0f, 0,  
@@ -79,15 +79,43 @@ namespace DesingerTables
                 new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
             }, 0.50f, TimelineGoTo.Null)},
 
+            //丢手雷
+            { "skill_grenade", new TimelineModel("skill_grenade", new TimelineNode[]{
+                new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
+                new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
+                new TimelineNode(0.10f, "FireBullet", new object[]{
+                    new BulletLauncher(
+                        Bullet.data["boomball"], null, Vector3.zero, 0, 3.0f, 2.0f, 0,  
+                            DesignerScripts.Bullet.bulletTween["BoomBallRolling"]
+                        ), "Muzzle"
+                    }
+                ),
+                new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
+            }, 0.50f, TimelineGoTo.Null)},
+
+            //召唤炸药桶
+            { "skill_exploseBarrel", new TimelineModel("skill_exploseBarrel", new TimelineNode[]{
+                new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
+                new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
+                new TimelineNode(0.10f, "SummonCharacter", new object[]{
+                    "Barrel", new ChaProperty(0, 5), 0f, "",
+                    new string[]{"Barrel"},
+                    new AddBuffInfo[]{
+                        new AddBuffInfo(DesingerTables.Buff.data["ExplosionBarrel"], null, null, 1, 10, true, true)
+                    }
+                }),
+                new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
+            }, 0.50f, TimelineGoTo.Null)},
+
             //发射小猴球
             { "skill_spaceMonkeyBall", new TimelineModel("skill_spaceMonkeyBall", new TimelineNode[]{
                 new TimelineNode(0.00f, "SetCasterControlState", new object[]{true, true, false}),
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Fire", false}),
-                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","MuzzleFlash","",false}),
+                new TimelineNode(0.10f, "PlaySightEffectOnCaster", new object[]{"Muzzle","Effect/MuzzleFlash","",false}),
                 new TimelineNode(0.10f, "CreateAoE", new object[]{
                     new AoeLauncher(
                         AoE.data["SpaceMonkeyBall"], null, Vector3.zero, 0.25f, 100, 0,
-                        DesignerScripts.AoE.aoeTweenFunc["SpaceMonkeyBallRolling"], new object[]{Vector3.forward * 0.3f} //小猴球原始滚动速度0.3米/秒
+                        DesignerScripts.AoE.aoeTweenFunc["SpaceMonkeyBallRolling"], new object[]{Vector3.forward * 0.1f} //小猴球原始滚动速度0.1米/秒
                     ), true
                 }),
                 new TimelineNode(0.50f, "SetCasterControlState", new object[]{true, true, true})
@@ -96,26 +124,15 @@ namespace DesingerTables
             //角色向移动方向打滚的技能效果
             { "skill_roll", new TimelineModel("skill_roll", new TimelineNode[]{
                 new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"Roll", true}),
-                new TimelineNode(0.00f, "PlaySightEffectOnCaster", new object[]{"Body","Fire_B","fire_following",true}),
+                new TimelineNode(0.00f, "PlaySightEffectOnCaster", new object[]{"Body","Effect/Fire_B","fire_following",true}),
                 new TimelineNode(0.01f, "SetCasterControlState", new object[]{false, false, false}),
                 new TimelineNode(0.10f, "CasterImmune", new object[]{0.70f}),
                 new TimelineNode(0.20f, "CasterForceMove", new object[]{2.0f, 0.5f, 0.00f, true, false}),
                 new TimelineNode(0.80f, "StopSightEffectOnCaster", new object[]{"Body", "fire_following"}),
-                new TimelineNode(0.80f, "PlaySightEffectOnCaster", new object[]{"Body","ShockWave","ShockWave",false}),
+                new TimelineNode(0.80f, "PlaySightEffectOnCaster", new object[]{"Body","Effect/ShockWave","shockWave",false}),
                 new TimelineNode(0.80f, "SetCasterControlState", new object[]{true, true, true})    //早0.1秒恢复操作状态手感好点
-            }, 0.90f, TimelineGoTo.Null) },
+            }, 0.90f, TimelineGoTo.Null) }
 
-            //角色跳跃(工作尚不正常)
-            { "skill_jump", new TimelineModel("skill_jump", new TimelineNode[]{
-                new TimelineNode(0.00f, "CasterPlayAnim", new object[]{"JumpStart", false}),
-                new TimelineNode(0.00f, "SetCasterControlState", new object[]{false, false, false}),
-                new TimelineNode(0.20f, "CasterForceMove", new object[]{0.5f, 0.33f, 0.00f, true, false}),   //y方向要新起一个了
-                new TimelineNode(0.33f, "CasterPlayAnim", new object[]{"Flying", false}),
-                new TimelineNode(0.33f, "CasterForceMove", new object[]{1.0f, 0.33f, 0.00f, true, false}),
-                new TimelineNode(0.66f, "CasterPlayAnim", new object[]{"JumpEnd", false}),
-                new TimelineNode(0.66f, "CasterForceMove", new object[]{0.5f, 0.33f, 0.00f, true, false}),
-                new TimelineNode(0.90f, "SetCasterControlState", new object[]{true, true, true})    //早0.1秒恢复操作状态手感好点
-            }, 0.90f, new TimelineGoTo(0.65f, 0.33f))}
         };
 
         

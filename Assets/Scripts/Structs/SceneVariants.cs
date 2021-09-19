@@ -80,7 +80,7 @@ public class SceneVariants{
 
     ///<summary>
     ///创建一个视觉特效在场景上
-    ///<param name="prefab">特效的prefab文件夹，约定就在Prefabs/Effect/下，所以路径不应该加这段</param>
+    ///<param name="prefab">特效的prefab文件夹，约定就在Prefabs/下，所以路径不应该加这段</param>
     ///<param name="pos">创建的位置</param>
     ///<param name="degree">角度</param>
     ///<param name="key">特效的key，如果重复则无法创建，删除的时候也有用，空字符串的话不加入管理</param>
@@ -102,12 +102,13 @@ public class SceneVariants{
     ///添加一个damageInfo
     ///<param name="attacker">攻击者，可以为null</param>
     ///<param name="target">挨打对象</param>
-    ///<param name="damage">基础伤害值
+    ///<param name="damage">基础伤害值</param>
+    ///<param name="damageDegree">伤害的角度</param>
     ///<param name="criticalRate">暴击率，0-1</param>
     ///<param name="tags">伤害信息类型</param>
     ///</summary>
-    public static void CreateDamage(GameObject attacker, GameObject target, Damage damage, float criticalRate, DamageInfoTag[] tags){
-        GameObject.Find("GameManager").GetComponent<DamageManager>().DoDamage(attacker, target, damage, criticalRate, tags);
+    public static void CreateDamage(GameObject attacker, GameObject target, Damage damage, float damageDegree, float criticalRate, DamageInfoTag[] tags){
+        GameObject.Find("GameManager").GetComponent<DamageManager>().DoDamage(attacker, target, damage, damageDegree, criticalRate, tags);
     }
 
     ///<summary>
@@ -118,8 +119,30 @@ public class SceneVariants{
     ///<param name="pos">创建的位置</param>
     ///<param name="degree">角度</param>
     ///<param name="baseProp">初期的基础属性</param>
+    ///<param name="tags">角色的标签，分类角色用的</param>
     ///</summary>
-    public static void CreateCharacter(string prefab, int side, Vector3 pos, ChaProperty baseProp, float degree, string unitAnimInfo = "Default_Gunner"){
-        GameObject.Find("GameManager").GetComponent<GameManager>().CreateCharacter(prefab, side, pos, baseProp, degree, unitAnimInfo);
+    public static GameObject CreateCharacter(string prefab, int side, Vector3 pos, ChaProperty baseProp, float degree, string unitAnimInfo = "Default_Gunner", string[] tags = null){
+        return GameObject.Find("GameManager").GetComponent<GameManager>().CreateCharacter(prefab, side, pos, baseProp, degree, unitAnimInfo, tags);
+    }
+
+    ///<summary>
+    ///在指定角色身上跳一个伤害或者治疗的数字，要跳别的走别的函数
+    ///<param name="cha">目标角色</param>
+    ///<param name="value">伤害数字，或者治疗数字</param>
+    ///<param name="asHeal">是否是治疗数字，如果是就用绿字，前面带+；如果不是，用红色前面-</param>
+    ///<param name="asCritical">是否暴击，暴击数字会变大，并且加个感叹号</param>
+    ///</summary>
+    public static void PopUpNumberOnCharacter(GameObject cha, int value, bool asHeal = false, bool asCritical = false){
+        GameObject.Find("Canvas").GetComponent<PopTextManager>().PopUpNumberOnCharacter(cha, value, asHeal, asCritical);
+    }
+
+    ///<summary>
+    ///在指定角色身上跳一个文字
+    ///<param name="cha">目标角色</param>
+    ///<param name="text">要跳出来的文字，格式什么都靠这个了</param>
+    ///<param name="size">字体大小</param>
+    ///</summary>
+    public static void PopUpStringOnCharacter(GameObject cha, string text, int size = 30){
+        GameObject.Find("Canvas").GetComponent<PopTextManager>().PopUpStringOnCharacter(cha, text, size);
     }
 }

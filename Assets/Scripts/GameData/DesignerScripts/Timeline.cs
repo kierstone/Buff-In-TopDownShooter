@@ -15,7 +15,8 @@ namespace DesignerScripts
             {"CasterImmune", CasterImmune},
             {"CreateAoE", CreateAoE},
             {"AddBuffToCaster", AddBuffToCaster},
-            {"CasterAddAmmo", CasterAddAmmo}
+            {"CasterAddAmmo", CasterAddAmmo},
+            {"SummonCharacter", SummonCharacter}
         };
 
         ///<summary>
@@ -175,7 +176,7 @@ namespace DesignerScripts
         ///在timeline焦点角色身上播放一个视觉特效
         ///<param name="args">总共4个参数：
         ///[0]string：要播放特效的绑点
-        ///[1]string：特效的文件名，位于Prafabs/Effect/下
+        ///[1]string：特效的文件名，位于Prafabs/下
         ///[2]string：特效的key，用于删除的
         ///[3]bool：是否循环播放特效（循环就要手动删除）
         ///</param>
@@ -255,6 +256,36 @@ namespace DesignerScripts
                 if (cs){
                     cs.AddBuff(abi);
                 }
+            }
+        }
+
+        ///<summary>
+        ///创建一个buff给角色，并且给他添加一系列buff
+        ///[0]string： prefab, 
+        ///[1]ChaProperty: baseProp, 
+        ///[2]float: degree, 
+        ///[3]string: unitAnimInfo = "Default_Gunner", 
+        ///[4]string[]: tags = null
+        ///[5]AddBuffInfo[]: 开始时候要添加的buff
+        ///</summary>
+        private static void SummonCharacter(TimelineObj timelineObj, params object[] args){
+            if (!timelineObj.caster) return;
+
+            string prefab = args.Length > 0 ? (string)args[0] : "";
+            int side = -1;
+            Vector3 pos = timelineObj.caster.transform.position;
+            ChaProperty cp = args.Length >  1? (ChaProperty)args[1] : new ChaProperty(100, 1); 
+            float degree = args.Length > 2 ? (float)args[2] : 0;
+            string uaInfo = args.Length > 3 ? (string)args[3] : "";
+            string[] tags = args.Length > 4 ? (string[])args[4] : null;
+            AddBuffInfo[] addBuffs = args.Length > 5 ? (AddBuffInfo[])args[5] : new AddBuffInfo[0];
+
+            GameObject sumGuy = SceneVariants.CreateCharacter(prefab, side, pos, cp, degree, uaInfo, tags);
+            ChaState sgs = sumGuy.GetComponent<ChaState>();
+            for (int i = 0; i < addBuffs.Length; i++){
+                addBuffs[i].caster = timelineObj.caster;
+                addBuffs[i].target = sumGuy;
+                sgs.AddBuff(addBuffs[i]);
             }
         }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 ///<summary>
 ///负责aoe的移动、生命周期等
 ///还负责aoe和角色、子弹的碰撞，需要加aoe碰撞也在这里。值得注意的是：aoe是主体
+///aoe捕捉范围与子弹碰撞不同的是，他不判断角色的体型（hitRadius或者bodyRadius），当然如果需要也可以加上，只是这个demo里不需要
 ///</summary>
 public class AoeManager : MonoBehaviour {
     private void FixedUpdate() {
@@ -20,7 +21,7 @@ public class AoeManager : MonoBehaviour {
             if (!aoeState) continue;
 
             //首先是aoe的移动
-            if (aoeState.tween != null){
+            if (aoeState.duration > 0 && aoeState.tween != null){
                 AoeMoveInfo aoeMoveInfo = aoeState.tween(aoe[i], aoeState.tweenRunnedTime);
                 aoeState.tweenRunnedTime += timePassed;
                 aoeState.SetMoveAndRotate(aoeMoveInfo);
@@ -29,6 +30,33 @@ public class AoeManager : MonoBehaviour {
             if (aoeState.justCreated == true){
                 //刚创建的，走onCreate
                 aoeState.justCreated = false;
+                //捕获所有角色
+                for (int m = 0; m < cha.Length; m++){
+                    if (
+                        cha[m] &&
+                        Utils.InRange(
+                            aoe[i].transform.position.x, aoe[i].transform.position.z, 
+                            cha[m].transform.position.x, cha[m].transform.position.z,
+                            aoeState.radius
+                        ) == true
+                    ){
+                        aoeState.characterInRange.Add(cha[m]);
+                    }
+                }
+                //捕获所有的子弹
+                for (int m = 0; m < bullet.Length; m++){
+                    if (
+                        bullet[m] &&
+                        Utils.InRange(
+                            aoe[i].transform.position.x, aoe[i].transform.position.z, 
+                            bullet[m].transform.position.x, bullet[m].transform.position.z,
+                            aoeState.radius
+                        ) == true
+                    ){
+                        aoeState.bulletInRange.Add(bullet[m]);
+                    }
+                }
+                //执行OnCreate
                 if (aoeState.model.onCreate != null){
                     aoeState.model.onCreate(aoe[i]);
                 }

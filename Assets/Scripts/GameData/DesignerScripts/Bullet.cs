@@ -9,19 +9,23 @@ namespace DesignerScripts
     ///</summary>
     public class Bullet{
         public static Dictionary<string, BulletOnCreate> onCreateFunc = new Dictionary<string, BulletOnCreate>(){
-            {"RecordBullet", RecordBullet}
+            {"RecordBullet", RecordBullet},
+            {"SetBombBouncing", SetBombBouncing}
         };
         public static Dictionary<string, BulletOnHit> onHitFunc = new Dictionary<string, BulletOnHit>(){
             {"CommonBulletHit", CommonBulletHit},
+            {"CreateAoEOnHit", CreateAoEOnHit},
             {"CloakBoomerangHit", CloakBoomerangHit}
         };
         public static Dictionary<string, BulletOnRemoved> onRemovedFunc = new Dictionary<string, BulletOnRemoved>(){
-            {"CommonBulletRemoved", CommonBulletRemoved}
+            {"CommonBulletRemoved", CommonBulletRemoved},
+            {"CreateAoEOnRemoved", CreateAoEOnRemoved}
         };
         public static Dictionary<string, BulletTween> bulletTween = new Dictionary<string, BulletTween>(){
             {"FollowingTarget", FollowingTarget},
             {"CloakBoomerangTween", CloakBoomerangTween},
-            {"SlowlyFaster", SlowlyFaster}
+            {"SlowlyFaster", SlowlyFaster},
+            {"BoomBallRolling", BoomBallRolling}
         };
         public static Dictionary<string, BulletTargettingFunction> targettingFunc = new Dictionary<string, BulletTargettingFunction>(){
             {"GetNearestEnemy", GetNearestEnemy},
@@ -47,13 +51,14 @@ namespace DesignerScripts
             if (sightEffect != ""){
                 UnitBindManager ubm = target.GetComponent<UnitBindManager>();
                 if (ubm){
-                    ubm.AddBindGameObject(bpName, "Prefabs/Effect/"+sightEffect, "", false);
+                    ubm.AddBindGameObject(bpName, "Prefabs/"+sightEffect, "", false);
                 }
             }
             SceneVariants.CreateDamage(
                 bulletState.caster, 
                 target,
                 new Damage(Mathf.CeilToInt(damageTimes * bulletState.propWhileCast.attack)), 
+                bullet.transform.eulerAngles.y,
                 critRate,
                 new DamageInfoTag[]{DamageInfoTag.directDamage, }
             );
@@ -180,7 +185,7 @@ namespace DesignerScripts
                 float backTime = bs.param.ContainsKey("backTime") ? (float)bs.param["backTime"] : 1.0f; //默认1秒 
                 if (bs.timeElapsed > backTime && target.Equals(bs.caster)){
                     SceneVariants.RemoveBullet(bullet);
-                    if (ccs) ccs.PlaySightEffect("Body","Heart");
+                    if (ccs) ccs.PlaySightEffect("Body","Effect/Heart");
                 }
             }
         }
@@ -217,5 +222,92 @@ namespace DesignerScripts
                 bos[0].buffParam["firedBullet"] = bullet;
             }
         }
+
+        ///<summary>
+        ///onCreate
+        ///手雷丢出去，要设置一下动画那个
+        ///</summary>
+        private static void SetBombBouncing(GameObject bullet){
+            BulletState bs = bullet.GetComponent<BulletState>();
+            BouncingBallY bb = bullet.GetComponentInChildren<BouncingBallY>();
+            if (!bs || !bb) return;
+            float totalTime = bs.duration;
+            if (totalTime <= 0){
+                Debug.Log("Boom Explosed immeditly");
+                return;
+            }
+            float[] dTime = new float[]{
+                totalTime * 3.000f / 6.000f,
+                totalTime * 5.000f / 6.000f,
+                totalTime - 0.001f
+            };
+            float highest = 2.2f;
+            bb.ResetTo(highest, dTime);           
+        }
+
+        ///<summary>
+        ///Tween
+        ///手雷的轨迹，在这里要做的是修改bullet的移动模式，一般不推荐这么干
+        ///</summary>
+        private static Vector3 BoomBallRolling(float t, GameObject bullet, GameObject target){
+            BulletState bs = bullet.GetComponent<BulletState>();
+            BouncingBallY bb = bullet.GetComponentInChildren<BouncingBallY>();
+            if (!bs || !bb) return Vector3.forward;
+            MoveType toType = MoveType.fly;
+            if (bb.hitGroundAt.Length <= 0 || t > bb.hitGroundAt[bb.hitGroundAt.Length - 1]){
+                toType = MoveType.ground;
+            }else{
+                float tt = Time.fixedDeltaTime;
+                for (int i = 0; i < bb.hitGroundAt.Length; i++){
+                    if (bb.hitGroundAt[i] - tt <= t && t <= bb.hitGroundAt[i] + tt){
+                        toType = MoveType.ground;
+                        break;
+                    }
+                }
+            }
+            
+            bs.SetMoveType(toType);
+            return Vector3.forward;
+        }
+
+        ///<summary>
+        ///onRemoved
+        ///在子弹位置创建一个aoe，所以aoe的始作俑者肯定是caster了，位置也是子弹位置，填写什么都无效，角度也是子弹角度，参数：
+        ///[0]AoeLauncher：aoe的发射器，caster在这里被重新赋值，position则作为增量加给现在的角色坐标
+        ///[1]AoeLauncher：如果bullet移除时后duration>0或者是obstacled，则会创建这个，如果有这个的话
+        ///</summary>
+        private static void CreateAoEOnRemoved(GameObject bullet){
+            BulletState bulletState = bullet.GetComponent<BulletState>();
+            if (!bulletState) return;
+            object[] onRemovedParams = bulletState.model.onRemovedParams;
+            if (onRemovedParams.Length <= 0)    return;
+            AoeLauncher al = (AoeLauncher)onRemovedParams[0];
+            if (onRemovedParams.Length > 1 && (bulletState.duration > 0 || bulletState.HitObstacle() == true)) {
+                al = (AoeLauncher)onRemovedParams[1];
+            }
+            al.caster = bulletState.caster;
+            al.position = bullet.transform.position;
+            al.degree = bullet.transform.eulerAngles.y;
+            Debug.Log("to create aoe effect " + al.model.prefab);
+            SceneVariants.CreateAoE(al);
+        }
+
+        ///<summary>
+        ///onHit
+        ///在子弹位置创建一个aoe，所以aoe的始作俑者肯定是caster了，位置也是子弹位置，填写什么都无效，角度也是子弹角度，参数：
+        ///[0]AoeLauncher：aoe的发射器，caster在这里被重新赋值，position则作为增量加给现在的角色坐标
+        ///</summary>
+        private static void CreateAoEOnHit(GameObject bullet, GameObject target){
+            BulletState bulletState = bullet.GetComponent<BulletState>();
+            if (!bulletState) return;
+            object[] onHitParams = bulletState.model.onHitParams;
+            if (onHitParams.Length <= 0)    return;
+            AoeLauncher al = (AoeLauncher)onHitParams[0];
+            al.caster = bulletState.caster;
+            al.position = bullet.transform.position;
+            al.degree = bullet.transform.eulerAngles.y;
+            SceneVariants.CreateAoE(al);
+        }
+
     }
 }

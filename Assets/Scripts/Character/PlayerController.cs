@@ -22,9 +22,12 @@ public class PlayerController : MonoBehaviour
         float ix = Input.GetAxis("Horizontal");
         float iz = Input.GetAxis("Vertical");
         bool[] sBtn = new bool[]{
+            Input.GetButton("Fire5"),
+            Input.GetButton("Fire4"),
             Input.GetButton("Fire3"),
             Input.GetButton("Fire2"),
-            Input.GetButton("Fire1")
+            Input.GetButton("Fire1"),
+            Input.GetButton("Jump")
         };
         
         Vector2 cursorPos = Input.mousePosition;
@@ -45,8 +48,8 @@ public class PlayerController : MonoBehaviour
         }
 
         string[] skillId = new string[]{
-            "spaceMonkeyBall", "teleportBullet", "cloakBoomerang"
-        }; //"fire", 
+             "explosiveBarrel", "teleportBullet","grenade","cloakBoomerang","fire","roll"
+        };
 
         bool btnHolding = false;
         for (int i = 0; i < sBtn.Length; i++){

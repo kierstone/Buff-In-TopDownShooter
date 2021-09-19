@@ -51,7 +51,7 @@ public class UnitBindPoint : MonoBehaviour{
     ///</summary>
     public void AddBindGameObject(string goPath, string key, bool loop){
         if (key != "" && bindGameObject.ContainsKey(key) == true) return;    //已经存在，加不成
-
+        
         GameObject effectGO = Instantiate<GameObject>(
             Resources.Load<GameObject>(goPath),
             Vector3.zero,

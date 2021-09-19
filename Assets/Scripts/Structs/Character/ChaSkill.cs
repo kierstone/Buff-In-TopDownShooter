@@ -16,9 +16,17 @@ public class SkillObj{
     ///</summary>
     public int level;
 
+    ///<summary>
+    ///冷却时间，单位秒。尽管游戏设计里面是没有冷却时间的，但是我们依然需要这个数据
+    ///因为作为一个ARPG子分类，和ARPG游戏有一样的问题：一次按键（时间够久）会发生连续多次使用技能，所以得有一个GCD来避免问题
+    ///当然和wow的gcd不同，这个“GCD”就只会让当前使用的技能进入0.1秒的冷却
+    ///</summary>
+    public float cooldown;
+
     public SkillObj(SkillModel model, int level = 1){
         this.model = model;
         this.level = level;
+        this.cooldown = 0;
     }
 }
 
@@ -47,7 +55,7 @@ public struct SkillModel{
     public TimelineModel effect;
 
     ///<summary>
-    ///学会技能的时候，同时获得的buff，比如被动技能，就是学会的时候给buff就够了，没有timeline
+    ///学会技能的时候，同时获得的buff
     ///</summary>
     public AddBuffInfo[] buff;
 

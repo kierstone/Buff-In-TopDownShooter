@@ -46,11 +46,22 @@ public class DamageInfo{
     ///</summary>
     public float hitRate = 2.00f;
 
-    public DamageInfo(GameObject attacker, GameObject defender, Damage damage, float baseCriticalRate, DamageInfoTag[] tags){
+    ///<summary>
+    ///伤害的角度，作为伤害打向角色的入射角度，比如子弹，就是它当前的飞行角度
+    ///</summary>
+    public float degree;
+
+    ///<summary>
+    ///伤害过后，给角色添加的buff
+    ///</summary>
+    public List<AddBuffInfo> addBuffs = new List<AddBuffInfo>();
+
+    public DamageInfo(GameObject attacker, GameObject defender, Damage damage, float damageDegree, float baseCriticalRate, DamageInfoTag[] tags){
         this.attacker = attacker;
         this.defender = defender;
         this.damage = damage;
         this.criticalRate = baseCriticalRate;
+        this.degree = damageDegree;
         this.tags = new DamageInfoTag[tags.Length];
         for (int i = 0; i < tags.Length; i++){
             this.tags[i] = tags[i];
@@ -86,6 +97,15 @@ public class DamageInfo{
             }
         }
         return false;
+    }
+
+    ///<summary>
+    ///将添加buff信息添加到伤害信息中来
+    ///buffOnHit\buffBeHurt\buffOnKill\buffBeKilled等伤害流程张的buff添加通常走这里
+    ///<param name="info">要添加的buff的信息</param>
+    ///</summary>
+    public void AddBuffToCha(AddBuffInfo buffInfo){
+        this.addBuffs.Add(buffInfo);
     }
 }
 

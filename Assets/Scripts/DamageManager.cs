@@ -49,13 +49,13 @@ public class DamageManager : MonoBehaviour{
             if (attackerChaState != null){
                 for (int i = 0; i < attackerChaState.buffs.Count; i++){
                     if (attackerChaState.buffs[i].model.onKill != null){
-                        attackerChaState.buffs[i].model.onKill(attackerChaState.buffs[i], ref dInfo, dInfo.defender);
+                        attackerChaState.buffs[i].model.onKill(attackerChaState.buffs[i], dInfo, dInfo.defender);
                     }
                 }
             }
             for (int i = 0; i < defenderChaState.buffs.Count; i++){
                 if (defenderChaState.buffs[i].model.onBeKilled != null){
-                    defenderChaState.buffs[i].model.onBeKilled(defenderChaState.buffs[i], ref dInfo, dInfo.attacker);
+                    defenderChaState.buffs[i].model.onBeKilled(defenderChaState.buffs[i], dInfo, dInfo.attacker);
                 }
             }
         }
@@ -70,6 +70,18 @@ public class DamageManager : MonoBehaviour{
             defenderChaState.ModResource(new ChaResource(
                 -dVal
             ));
+            //按游戏设计的规则跳数字，如果要有暴击，也可以丢在策划脚本函数（lua可以返回多参数）也可以随便怎么滴
+            SceneVariants.PopUpNumberOnCharacter(dInfo.defender, Mathf.Abs(dVal), isHeal);
+        }
+
+        //伤害流程走完，添加buff
+        for (int i = 0; i < dInfo.addBuffs.Count; i++){
+            GameObject toCha = dInfo.addBuffs[i].target;
+            ChaState toChaState = toCha.Equals(dInfo.attacker) ? attackerChaState : defenderChaState;
+
+            if (toChaState != null && toChaState.dead == false){
+                toChaState.AddBuff(dInfo.addBuffs[i]);
+            }
         }
         
     }
@@ -78,13 +90,14 @@ public class DamageManager : MonoBehaviour{
     ///添加一个damageInfo
     ///<param name="attacker">攻击者，可以为null</param>
     ///<param name="target">挨打对象</param>
-    ///<param name="damage">基础伤害值
+    ///<param name="damage">基础伤害值</param>
+    ///<param name="damageDegree">伤害的角度</param>
     ///<param name="criticalRate">暴击率，0-1</param>
     ///<param name="tags">伤害信息类型</param>
     ///</summary>
-    public void DoDamage(GameObject attacker, GameObject target, Damage damage, float criticalRate, DamageInfoTag[] tags){
+    public void DoDamage(GameObject attacker, GameObject target, Damage damage, float damageDegree, float criticalRate, DamageInfoTag[] tags){
         this.damageInfos.Add(new DamageInfo(
-            attacker, target, damage, criticalRate, tags
+            attacker, target, damage, damageDegree, criticalRate, tags
         ));
     }
 }

@@ -95,6 +95,11 @@ public class ChaState:MonoBehaviour{
     public int side = 0;
 
     ///<summary>
+    ///根据tags可以判断出这是什么样的人
+    ///</summary>
+    public string[] tags = new string[0];
+
+    ///<summary>
     ///角色当前的属性
     ///</summary>
     public ChaProperty property{get{
@@ -174,6 +179,13 @@ public class ChaState:MonoBehaviour{
 
             //无敌时间减少
             if (_immuneTime > 0) _immuneTime -= timePassed;
+
+            //技能冷却时间
+            for (int i = 0; i < this.skills.Count; i++){
+                if (this.skills[i].cooldown > 0){
+                    this.skills[i].cooldown -= timePassed;
+                }
+            }
 
             //对身上的buff进行管理
             List<BuffObj> toRemove = new List<BuffObj>();
@@ -374,12 +386,12 @@ public class ChaState:MonoBehaviour{
     ///<summary>
     ///在角色身上放一个特效，其实是挂在一个gameObject而已
     ///<param name="bindPointKey">绑点名称，角色有Muzzle/Head/Body这3个，需要再加</param>
-    ///<param name="effect">要播放的特效文件名，统一走Prefabs/Effect/下拿</param>
+    ///<param name="effect">要播放的特效文件名，统一走Prefabs/下拿</param>
     ///<param name="effectKey">这个特效的key，要删除的时候就有用了</param>
     ///<param name="effect">要播放的特效</param>
     ///</summary>
     public void PlaySightEffect(string bindPointKey, string effect, string effectKey = "", bool loop = false){
-        bindPoints.AddBindGameObject(bindPointKey, "Prefabs/Effect/" + effect, effectKey, loop);
+        bindPoints.AddBindGameObject(bindPointKey, "Prefabs/" + effect, effectKey, loop);
     }
 
     ///<summary>
@@ -488,7 +500,8 @@ public class ChaState:MonoBehaviour{
     public bool CastSkill(string id){
         if (this.controlState.canUseSkill == false) return false; //不能用技能就不放了
         SkillObj skillObj = GetSkillById(id);
-        if (skillObj == null) return false;
+        if (skillObj == null || skillObj.cooldown > 0) return false;
+        bool castSuccess = false;
         if (this.resource.Enough(skillObj.model.condition) == true){
             TimelineObj timeline = new TimelineObj(
                 skillObj.model.effect, this.gameObject, skillObj
@@ -498,11 +511,15 @@ public class ChaState:MonoBehaviour{
                     timeline = buffs[i].model.onCast(buffs[i], skillObj, timeline);
                 }
             }
-            this.ModResource(-1 * skillObj.model.cost);
-            SceneVariants.CreateTimeline(timeline);
-            return true;
+            if (timeline != null){
+                this.ModResource(-1 * skillObj.model.cost);
+                SceneVariants.CreateTimeline(timeline);
+                castSuccess = true;
+            }
+            
         }
-        return false;
+        skillObj.cooldown = 0.1f;   //无论成功与否，都会进入gcd
+        return castSuccess;
     }
 
     ///<summary>
@@ -535,6 +552,22 @@ public class ChaState:MonoBehaviour{
     }
 
     ///<summary>
+    ///设置视觉元素
+    ///</summary>
+    public void SetView(GameObject view, Dictionary<string, AnimInfo> animInfo){
+        if (view == null) return;
+        synchronizedUnits();
+        view.transform.SetParent(viewContainer.transform);
+        view.transform.position = new Vector3(0, this.gameObject.transform.position.y, 0);
+        this.gameObject.transform.position = new Vector3(
+            this.gameObject.transform.position.x,
+            0,
+            this.gameObject.transform.position.z
+        );
+        this.gameObject.GetComponent<UnitAnim>().animInfo = animInfo;
+    }
+
+    ///<summary>
     ///设置无敌时间
     ///<param name="time">无敌的时间，单位：秒</param>
     ///</summary>
@@ -542,4 +575,16 @@ public class ChaState:MonoBehaviour{
         this._immuneTime = Mathf.Max(this._immuneTime, time);
     }
 
+    ///<summary>
+    ///是否拥有某个tag
+    ///</summary>
+    public bool HasTag(string tag){
+        if (this.tags == null || this.tags.Length <= 0) return false;
+        for (int i = 0; i < this.tags.Length; i++){
+            if(tags[i] == tag){
+                return true;
+            }
+        }
+        return false;
+    }
 }

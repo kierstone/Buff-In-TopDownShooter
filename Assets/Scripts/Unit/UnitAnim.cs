@@ -55,7 +55,7 @@ public class UnitAnim : MonoBehaviour{
     ///<param name="animName">动画的名称，对应animInfo的key</param>
     ///</summary>
     public void Play(string animName){
-        if (animInfo.ContainsKey(animName) == false) return;
+        if (animInfo.ContainsKey(animName) == false || animator == null) return;
         if (playingAnim != null && playingAnim.key == animName) return;  //已经在播放了
         AnimInfo toPlay = animInfo[animName];
         if (currentAnimPriority > toPlay.priority) return;   //优先级不够不放

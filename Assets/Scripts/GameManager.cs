@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,12 +30,14 @@ public class GameManager : MonoBehaviour
         //创建主角
         Vector3 playerPos = SceneVariants.map.GetRandomPosForCharacter(new RectInt(0, 0, SceneVariants.map.MapWidth(), SceneVariants.map.MapHeight()));
         mainCharacter = this.CreateCharacter(
-            "FemaleGunner", 1, new Vector3(), new ChaProperty(100, Random.Range(5000,7000), 6, Random.Range(50,70)), 0
+            "FemaleGunner", 1, new Vector3(), new ChaProperty(100, Random.Range(5000,7000), 600, Random.Range(50,70)), 0
         );  //这里必须是new Vector3()因为相机跟随的设置问题
         mainCharacter.AddComponent<PlayerController>().mainCamera = Camera.main;
         
         //镜头跟随
         GameObject.Find("Main Camera").GetComponent<CamFollow>().SetFollowCharacter(mainCharacter);   
+        //ui血量捕捉，别问我这是什么狗屎了，我也觉得狗屎
+        GameObject.Find("PlayerHP").GetComponent<PlayerStateListener>().playerGameObject = mainCharacter;
 
         //再设置主角位置
         mainCharacter.transform.position = playerPos;  
@@ -45,30 +48,17 @@ public class GameManager : MonoBehaviour
         mcs.LearnSkill(DesingerTables.Skill.data["homingMissle"]);   
         mcs.LearnSkill(DesingerTables.Skill.data["cloakBoomerang"]);
         mcs.LearnSkill(DesingerTables.Skill.data["teleportBullet"]);
+        mcs.LearnSkill(DesingerTables.Skill.data["grenade"]);
+        mcs.LearnSkill(DesingerTables.Skill.data["explosiveBarrel"]);
 
         //【test】给主角添加火焰护盾的aoe
-        this.CreateAoE(new AoeLauncher(
-            DesingerTables.AoE.data["BulletShield"], mainCharacter, mainCharacter.transform.position,
-            0.3f, 600.00f, 0,
-            DesignerScripts.AoE.aoeTweenFunc["AroundCaster"],//DesignerScripts.AoE.aoeTweenFunc["AroundCaster"], 
-            new object[]{1.2f, 360.0f}
-        ));
-        //【test】屏幕中心的黑洞
-        this.CreateAoE(new AoeLauncher(
-            DesingerTables.AoE.data["BlackHole"], null, 
-            new Vector3(SceneVariants.map.MapWidth() * SceneVariants.map.gridSize.x / 2, 0, SceneVariants.map.MapHeight() * SceneVariants.map.gridSize.y / 2),
-            10.0f, 9999, 0
-        ));
-
-        //创建默认敌人
-        for (int i = 0; i < 5; i++){
-            GameObject enemy = CreateCharacter(
-                "MaleGunner", 2, 
-                SceneVariants.map.GetRandomPosForCharacter(new RectInt(0, 0, SceneVariants.map.MapWidth(), SceneVariants.map.MapHeight())),
-                new ChaProperty(Random.Range(50,70), 50, 0, Random.Range(15,40), 100, 0.25f, 0.4f), Random.Range(0.00f, 359.99f)
-            );
-            enemy.AddComponent<SimpleAI>();
-        }
+        // this.CreateAoE(new AoeLauncher(
+        //     DesingerTables.AoE.data["BulletShield"], mainCharacter, mainCharacter.transform.position,
+        //     0.3f, 600.00f, 0,
+        //     DesignerScripts.AoE.aoeTweenFunc["AroundCaster"],//DesignerScripts.AoE.aoeTweenFunc["AroundCaster"], 
+        //     new object[]{1.2f, 360.0f}
+        // ));
+        
     }
 
     void Update()
@@ -194,7 +184,7 @@ public class GameManager : MonoBehaviour
 
     ///<summary>
     ///创建一个视觉特效在场景上
-    ///<param name="prefab">特效的prefab文件夹，约定就在Prefabs/Effect/下，所以路径不应该加这段</param>
+    ///<param name="prefab">特效的prefab文件夹，约定就在Prefabs/下，所以路径不应该加这段</param>
     ///<param name="pos">创建的位置</param>
     ///<param name="degree">角度</param>
     ///<param name="key">特效的key，如果重复则无法创建，删除的时候也有用，空字符串的话不加入管理</param>
@@ -204,7 +194,7 @@ public class GameManager : MonoBehaviour
         if (sightEffect.ContainsKey(key) == true) return;    //已经存在，加不成
 
         GameObject effectGO = Instantiate<GameObject>(
-            Resources.Load<GameObject>("Prefabs/Effect/"+prefab),
+            Resources.Load<GameObject>("Prefabs/"+prefab),
             pos,
             Quaternion.identity,
             this.gameObject.transform
@@ -241,19 +231,24 @@ public class GameManager : MonoBehaviour
     ///<param name="pos">创建的位置</param>
     ///<param name="degree">角度</param>
     ///<param name="baseProp">初期的基础属性</param>
+    ///<param name="tags">角色的标签，分类角色用的</param>
     ///</summary>
-    public GameObject CreateCharacter(string prefab, int side, Vector3 pos, ChaProperty baseProp, float degree, string unitAnimInfo = "Default_Gunner"){
+    public GameObject CreateCharacter(string prefab, int side, Vector3 pos, ChaProperty baseProp, float degree, string unitAnimInfo = "Default_Gunner", string[] tags = null){
         GameObject chaObj = CreateFromPrefab("Character/CharacterObj");
         //Vector3 playerPos = SceneVariants.map.GetRandomPosForCharacter(new RectInt(0, 0, SceneVariants.map.MapWidth(), SceneVariants.map.MapHeight()));
-        GameObject cPrefab = CreateFromPrefab("Character/" + prefab);
-        cPrefab.transform.SetParent(chaObj.transform);
         //cha.AddComponent<PlayerController>().mainCamera = Camera.main; //敌人没有controller
         ChaState cs = chaObj.GetComponent<ChaState>();
         if (cs){
             cs.InitBaseProp(baseProp);
             cs.side = side;
+            Dictionary<string, AnimInfo> aInfo = new Dictionary<string, AnimInfo>();
+            if (unitAnimInfo != "" && DesingerTables.UnitAnimInfo.data.ContainsKey(unitAnimInfo)){
+                aInfo = DesingerTables.UnitAnimInfo.data[unitAnimInfo];
+            }
+            cs.SetView(CreateFromPrefab("Character/" + prefab), aInfo);
+            if (tags != null) cs.tags = tags;
         }
-        chaObj.GetComponent<UnitAnim>().animInfo = DesingerTables.UnitAnimInfo.data[unitAnimInfo];
+        
         chaObj.transform.position = pos;
         chaObj.transform.RotateAround(chaObj.transform.position, Vector3.up, degree);
         return chaObj;

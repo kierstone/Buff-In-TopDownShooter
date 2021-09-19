@@ -9,10 +9,12 @@ namespace DesignerScripts
     ///</summary>
     public class AoE{
         public static Dictionary<string, AoeOnCreate> onCreateFunc = new Dictionary<string, AoeOnCreate>(){
-            
+            {"CreateSightEffect", CreateSightEffect}
         };
         public static Dictionary<string, AoeOnRemoved> onRemovedFunc = new Dictionary<string, AoeOnRemoved>(){
-            {"DoDamageOnRemoved", DoDamageOnRemoved}
+            {"DoDamageOnRemoved", DoDamageOnRemoved},
+            {"CreateAoeOnRemoved", CreateAoeOnRemoved},
+            {"BarrelExplosed", BarrelExplosed}
         };
         public static Dictionary<string, AoeOnTick> onTickFunc = new Dictionary<string, AoeOnTick>(){
             {"BlackHole", BlackHole}
@@ -92,7 +94,7 @@ namespace DesignerScripts
                 }
                 if (side != bSide){
                     SceneVariants.RemoveBullet(bullets[i], false);
-                    SceneVariants.CreateSightEffect("HitEffect_B", aoe.transform.position, aoe.transform.eulerAngles.y);
+                    SceneVariants.CreateSightEffect("Effect/HitEffect_B", aoe.transform.position, aoe.transform.eulerAngles.y);
                 }
             }
 
@@ -205,7 +207,12 @@ namespace DesignerScripts
             for (int i = 0; i < characters.Count; i++){
                 ChaState cs = characters[i].GetComponent<ChaState>();
                 if (cs && cs.dead == false && ((toFoe == true && side != cs.side) || (toAlly == true && side == cs.side))){
-                    SceneVariants.CreateDamage(aoeState.caster, characters[i], damage, 0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage});
+                    Vector3 chaToAoe = characters[i].transform.position - aoe.transform.position;
+                    SceneVariants.CreateDamage(
+                        aoeState.caster, characters[i], 
+                        damage, Mathf.Atan2(chaToAoe.x, chaToAoe.z) * 180 / Mathf.PI,
+                        0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage}
+                    );
                     if (hurtAction == true) cs.Play("Hurt");
                     if (effect != "") cs.PlaySightEffect(bp, effect);
                 }
@@ -247,7 +254,12 @@ namespace DesignerScripts
             for (int i = 0; i < aoeState.characterInRange.Count; i++){
                 ChaState cs = aoeState.characterInRange[i].GetComponent<ChaState>();
                 if (cs && cs.dead == false && ((toFoe == true && side != cs.side) || (toAlly == true && side == cs.side))){
-                    SceneVariants.CreateDamage(aoeState.caster, aoeState.characterInRange[i], damage, 0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage});
+                    Vector3 chaToAoe = aoeState.characterInRange[i].transform.position - aoe.transform.position;
+                    SceneVariants.CreateDamage(
+                        aoeState.caster, aoeState.characterInRange[i], 
+                        damage, Mathf.Atan2(chaToAoe.x, chaToAoe.z) * 180 / Mathf.PI,
+                        0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage}
+                    );
                     if (hurtAction == true) cs.Play("Hurt");
                     if (effect != "") cs.PlaySightEffect(bp, effect);
                 }
@@ -271,6 +283,102 @@ namespace DesignerScripts
                     cs.AddForceMove(new MovePreorder(
                         disV * inTime, 1.00f
                     ));
+                }
+            }
+        }
+
+        ///<summary>
+        ///OnCreate
+        ///在aoe的位置上放一个视觉特效
+        ///[0]string：特效的prefab，Prefab/下的路径，因为是特效。必定是一次性的特效，如果要循环播放完全可以绑定在aoe上，创建时开始播放，结束时停止。
+        ///</summary>
+        private static void CreateSightEffect(GameObject aoe){
+            AoeState ast = aoe.GetComponent<AoeState>();
+            if (!ast) return;
+            object[] p = ast.model.onCreateParams;
+            string prefab = p.Length > 0 ? (string)p[0] : "";
+            SceneVariants.CreateSightEffect(
+                prefab, aoe.transform.position, aoe.transform.eulerAngles.y
+            );
+        }
+
+        ///<summary>
+        ///onRemoved
+        ///aoe移除的时候创建另外一个aoe
+        ///[0]string: aoe的model的id
+        ///[1]float：aoe的半径（米）
+        ///[2]float：aoe持续时间（秒）
+        ///[3]string：aoe的Tween函数名
+        ///[4]object[]：aoe的Tween函数的参数
+        ///[5]Dictionary(string, object)：aoeObj的参数
+        ///</summary>
+        private static void CreateAoeOnRemoved(GameObject aoe){
+            AoeState ast = aoe.GetComponent<AoeState>();
+            if (!ast) return;
+            object[] p = ast.model.onRemovedParams;
+            if (p.Length <= 0) return;
+            string id = (string)p[0];
+            if (id == "" || DesingerTables.AoE.data.ContainsKey(id) == false) return;
+            AoeModel model = DesingerTables.AoE.data[id];
+            float radius = p.Length > 1 ? (float)p[1] : 0.01f;
+            float duration = p.Length > 2 ? (float)p[2] : 0;
+            string aoeTweenId = p.Length > 3 ? (string)p[3] : "";
+            AoeTween tween = null;
+            if (aoeTweenId != "" && DesignerScripts.AoE.aoeTweenFunc.ContainsKey(aoeTweenId)){
+                tween = DesignerScripts.AoE.aoeTweenFunc[aoeTweenId];
+            }
+            object[] tp = new object[0];
+            if (p.Length > 4) tp = (object[])p[4];
+            Dictionary<string,object> ap = null;
+            if (p.Length > 5) ap = (Dictionary<string, object>)p[5];
+            AoeLauncher al = new AoeLauncher(
+                model, ast.caster, aoe.transform.position, radius, 
+                duration, aoe.transform.eulerAngles.y, tween, tp, ap
+            );
+            SceneVariants.CreateAoE(al);
+        }
+
+        ///<summary>
+        ///onRemoved
+        ///炸药桶爆炸了
+        ///</summary>
+        private static void BarrelExplosed(GameObject aoe){
+            AoeState aoeState = aoe.GetComponent<AoeState>();
+            if (!aoeState) return;
+
+            //new Damage(0, 50), 0.15f, true, false, true, "Effect/HitEffect_A", "Body"
+            Damage baseDamage = new Damage(0, 50);
+            float damageTimes = 0.15f;
+            string effect = "Effect/HitEffect_A";
+            string bp = "Body";
+
+            Damage damage = baseDamage * (aoeState.propWhileCreate.attack * damageTimes);
+
+            int side = -1;
+            if (aoeState.caster){
+                ChaState ccs = aoeState.caster.GetComponent<ChaState>();
+                if (ccs) side = ccs.side;
+            }
+
+            for (int i = 0; i < aoeState.characterInRange.Count; i++){
+                ChaState cs = aoeState.characterInRange[i].GetComponent<ChaState>();
+                if (cs && cs.dead == false && side != cs.side){
+                    if (cs.HasTag("Barrel") == true){
+                        SceneVariants.CreateDamage(
+                            (GameObject)aoeState.param["Barrel"], aoeState.characterInRange[i],
+                            new Damage(0, 9999), 0f, 0f, new DamageInfoTag[]{DamageInfoTag.directDamage}
+                        );
+                    }else{
+                        Vector3 chaToAoe = aoeState.characterInRange[i].transform.position - aoe.transform.position;
+                        SceneVariants.CreateDamage(
+                            aoeState.caster, aoeState.characterInRange[i], 
+                            damage, Mathf.Atan2(chaToAoe.x, chaToAoe.z) * 180 / Mathf.PI,
+                            0.05f, new DamageInfoTag[]{DamageInfoTag.directDamage}
+                        );
+                        cs.Play("Hurt");
+                        cs.PlaySightEffect(bp, effect);
+                    }
+                    
                 }
             }
         }
